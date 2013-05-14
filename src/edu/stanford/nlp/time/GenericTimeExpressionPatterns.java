@@ -42,7 +42,7 @@ public class GenericTimeExpressionPatterns implements TimeExpressionPatterns {
     public TimexTypeMatchNodePattern(SUTime.TimexType type) { this.type = type; }
     public boolean match(TimeExpression te) {
       if (te != null) {
-        SUTime.Temporal t = te.getTemporal();
+                Temporal t = te.getTemporal();
         if (t != null) {
           return type.equals(t.getTimexType());
         }
@@ -113,7 +113,7 @@ public class GenericTimeExpressionPatterns implements TimeExpressionPatterns {
     for (SUTime.TimeUnit t: SUTime.TimeUnit.values()) {
       if (!t.equals(SUTime.TimeUnit.UNKNOWN)) {
         //env.bind(t.name(), new SequenceMatchRules.PrimitiveValue<SUTime.Temporal>("DURATION", t.getDuration(), "TIMEUNIT"));
-        env.bind(t.name(), new Expressions.PrimitiveValue<SUTime.Temporal>("TIMEUNIT", t.getDuration()));
+        env.bind(t.name(), new Expressions.PrimitiveValue<Temporal>("TIMEUNIT", t.getDuration()));
       }
     }
     for (SUTime.StandardTemporalType t: SUTime.StandardTemporalType.values()) {
@@ -122,24 +122,24 @@ public class GenericTimeExpressionPatterns implements TimeExpressionPatterns {
     env.bind("Duration", new Expressions.PrimitiveValue<ValueFunction>(
             Expressions.TYPE_FUNCTION,
             new ValueFunctions.NamedValueFunction("Duration") {
-              private SUTime.Temporal addEndPoints(SUTime.Duration d, SUTime.Time beginTime, SUTime.Time endTime)
+              private Temporal addEndPoints(Duration d, Time beginTime, Time endTime)
               {
-                SUTime.Temporal t = d;
+                Temporal t = d;
                 if (d != null && (beginTime != null || endTime != null)) {
-                  SUTime.Time b = beginTime;
-                  SUTime.Time e = endTime;
+                    Time b = beginTime;
+                    Time e = endTime;
                   // New so we get different time ids
                   if (b == SUTime.TIME_REF_UNKNOWN) {
-                    b = new SUTime.RefTime("UNKNOWN");
+                    b = new RefTime("UNKNOWN");
                   } else if (b == SUTime.TIME_UNKNOWN) {
-                    b = new SUTime.SimpleTime("UNKNOWN");
+                    b = new SimpleTime("UNKNOWN");
                   }
                   if (e == SUTime.TIME_REF_UNKNOWN) {
-                    e = new SUTime.RefTime("UNKNOWN");
+                    e = new RefTime("UNKNOWN");
                   } else if (e == SUTime.TIME_UNKNOWN) {
-                    e = new SUTime.SimpleTime("UNKNOWN");
+                    e = new SimpleTime("UNKNOWN");
                   }
-                  t = new SUTime.Range(b,e,d);
+                  t = new Range(b,e,d);
                 }
                 return t;
               }
@@ -150,7 +150,7 @@ public class GenericTimeExpressionPatterns implements TimeExpressionPatterns {
               }
               public Value apply(Env env, List<Value> in) {
                 if (in.size() == 2) {
-                  SUTime.Duration d = (SUTime.Duration) in.get(0).get();
+                    Duration d = (Duration) in.get(0).get();
                   if (in.get(1).get() instanceof Number) {
                     int m = ((Number) in.get(1).get()).intValue();
                     return new Expressions.PrimitiveValue("DURATION", d.multiplyBy(m));
@@ -175,27 +175,27 @@ public class GenericTimeExpressionPatterns implements TimeExpressionPatterns {
                   //String durationUnitString = (durationUnitTokens != null)? durationUnitTokens.get(0).get(CoreAnnotations.TextAnnotation.class):null;
                   //SUTime.Duration durationUnit = getDuration(durationUnitString);
                   TimeExpression te = (durationUnitTokens != null)? durationUnitTokens.get(0).get(TimeExpression.Annotation.class):null;
-                  SUTime.Duration durationUnit = (SUTime.Duration) te.getTemporal();
+                    Duration durationUnit = (Duration) te.getTemporal();
 
                   // TODO: Handle inexactness
                   // Create duration range...
-                  SUTime.Duration durationStart = (durationStartVal != null)? durationUnit.multiplyBy(durationStartVal.intValue()):null;
-                  SUTime.Duration durationEnd = (durationEndVal != null)? durationUnit.multiplyBy(durationEndVal.intValue()):null;
-                  SUTime.Duration duration = durationStart;
+                    Duration durationStart = (durationStartVal != null)? durationUnit.multiplyBy(durationStartVal.intValue()):null;
+                    Duration durationEnd = (durationEndVal != null)? durationUnit.multiplyBy(durationEndVal.intValue()):null;
+                    Duration duration = durationStart;
                   if (duration == null) {
                     if (durationEnd != null) {
                       duration = durationEnd;
                     } else {
-                      duration = new SUTime.InexactDuration(durationUnit);
+                      duration = new InexactDuration(durationUnit);
                     }
                   }
-                  else if (durationEnd != null) { duration = new SUTime.DurationRange(durationStart, durationEnd); }
+                  else if (durationEnd != null) { duration = new DurationRange(durationStart, durationEnd); }
 
                   // Add begin and end times
-                  SUTime.Time beginTime = (in.size() > 3)? (SUTime.Time) in.get(3).get():null;
-                  SUTime.Time endTime = (in.size() > 4)? (SUTime.Time) in.get(4).get():null;
-                  SUTime.Temporal temporal = addEndPoints(duration, beginTime, endTime);
-                  if (temporal instanceof SUTime.Range) {
+                    Time beginTime = (in.size() > 3)? (Time) in.get(3).get():null;
+                    Time endTime = (in.size() > 4)? (Time) in.get(4).get():null;
+                    Temporal temporal = addEndPoints(duration, beginTime, endTime);
+                  if (temporal instanceof Range) {
                     return new Expressions.PrimitiveValue("RANGE", temporal);
                   } else {
                     return new Expressions.PrimitiveValue("DURATION", temporal);
@@ -261,7 +261,7 @@ public class GenericTimeExpressionPatterns implements TimeExpressionPatterns {
                   return false;
                 }
                 if (in.get(0) == null ||
-                        (!(in.get(0).get() instanceof SUTime.Temporal) && !(in.get(0).get() instanceof TimeExpression))) {
+                        (!(in.get(0).get() instanceof Temporal) && !(in.get(0).get() instanceof TimeExpression))) {
                   return false;
                 }
                 if (in.get(1) == null ||
@@ -275,10 +275,10 @@ public class GenericTimeExpressionPatterns implements TimeExpressionPatterns {
               }
               public Value apply(Env env, List<Value> in) {
                 if (in.size() >= 1) {
-                  SUTime.Temporal temporal = null;
+                    Temporal temporal = null;
                   Object t = in.get(0).get();
-                  if (t instanceof SUTime.Temporal) {
-                    temporal = (SUTime.Temporal) in.get(0).get();
+                  if (t instanceof Temporal) {
+                    temporal = (Temporal) in.get(0).get();
                   } else if (t instanceof TimeExpression) {
                     temporal = ((TimeExpression) t).getTemporal();
                   } else {
@@ -306,12 +306,12 @@ public class GenericTimeExpressionPatterns implements TimeExpressionPatterns {
                       scale = arg2.intValue();
                     }
                   }
-                  SUTime.Duration period = temporal.getPeriod();
+                    Duration period = temporal.getPeriod();
                   if (period != null & scale != 1) {
                     period = period.multiplyBy(scale);
                   }
                   return new Expressions.PrimitiveValue("PeriodicTemporalSet",
-                          new SUTime.PeriodicTemporalSet(temporal,period,quant,null/*"P1X"*/));
+                          new PeriodicTemporalSet(temporal,period,quant,null/*"P1X"*/));
                 } else {
                   throw new IllegalArgumentException("Invalid number of arguments to " + name);
                 }
@@ -344,15 +344,15 @@ public class GenericTimeExpressionPatterns implements TimeExpressionPatterns {
                         Value v2 = ((MatchedExpression) args[i]).getValue();
                         args[i] = (v2 != null)? v2.get():null;
                       }
-                      if (args[i] != null && !(args[i] instanceof SUTime.Temporal)) {
+                      if (args[i] != null && !(args[i] instanceof Temporal)) {
                         allTemporalArgs = false;
                       }
                     }
                   }
                   if (allTemporalArgs) {
-                    SUTime.Temporal[] temporalArgs = new SUTime.Temporal[args.length];
+                        Temporal[] temporalArgs = new Temporal[args.length];
                     for (int i = 0; i < args.length; i++) {
-                      temporalArgs[i] = (SUTime.Temporal) args[i];
+                      temporalArgs[i] = (Temporal) args[i];
                     }
                     return new Expressions.PrimitiveValue(null, op.apply(temporalArgs));
                   } else {
@@ -378,7 +378,7 @@ public class GenericTimeExpressionPatterns implements TimeExpressionPatterns {
       }
     }
     if (!flagsSet) {
-      if (te.getTemporal() instanceof SUTime.PartialTime) {
+      if (te.getTemporal() instanceof PartialTime) {
         flags = SUTime.RESOLVE_TO_CLOSEST;
       }
     }

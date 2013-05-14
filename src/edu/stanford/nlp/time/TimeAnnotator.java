@@ -175,7 +175,7 @@ public class TimeAnnotator implements Annotator {
   }
 
   public void annotate(Annotation annotation) {
-    SUTime.TimeIndex timeIndex = new SUTime.TimeIndex();
+        TimeIndex timeIndex = new TimeIndex();
     String docDate = annotation.get(CoreAnnotations.DocDateAnnotation.class);
     if(docDate == null){
       Calendar cal = annotation.get(CoreAnnotations.CalendarAnnotation.class);
@@ -223,7 +223,7 @@ public class TimeAnnotator implements Annotator {
    * Helper method for people not working from a complete Annotation.
    * @return a list of CoreMap.  Each CoreMap represents a detected temporal expression.
    */
-  public List<CoreMap> annotateSingleSentence(CoreMap sentence, String docDate, SUTime.TimeIndex timeIndex) {
+  public List<CoreMap> annotateSingleSentence(CoreMap sentence, String docDate, TimeIndex timeIndex) {
     CoreMap annotationCopy = NumberSequenceClassifier.alignSentence(sentence);
     if (docDate.equals("")) {
       docDate = null;

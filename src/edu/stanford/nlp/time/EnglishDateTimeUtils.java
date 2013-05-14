@@ -214,14 +214,14 @@ public class EnglishDateTimeUtils {
   } // End of subroutine dayOfYear
 
 
-  private static SUTime.IsoDate parseIsoDate(String iso)
+  private static IsoDate parseIsoDate(String iso)
   {
     Matcher matcher = isoDateFormat.matcher(iso);
     if (matcher.matches()) {
       int year = Integer.parseInt(matcher.group(1));
       int month = Integer.parseInt(matcher.group(2));
       int day = Integer.parseInt(matcher.group(3));
-      return new SUTime.IsoDate(year, month, day);
+      return new IsoDate(year, month, day);
     } else {
       return null;
     }
@@ -258,7 +258,7 @@ public class EnglishDateTimeUtils {
   } // End of subroutine week2DateIso
 
   protected static String date2Week(String iso) {
-    SUTime.IsoDate isoDate = parseIsoDate(iso);
+        IsoDate isoDate = parseIsoDate(iso);
     if (isoDate != null) {
       return date2Week(isoDate.year, isoDate.month, isoDate.day);
     } else {
@@ -286,7 +286,7 @@ public class EnglishDateTimeUtils {
   // Converts date to Day of Week
   // Sunday = 0, Monday = 1, etc
   private static int date2DOW(String iso)  {
-    SUTime.IsoDate isoDate = parseIsoDate(iso);
+        IsoDate isoDate = parseIsoDate(iso);
     if (isoDate != null) {
       return date2DOW(isoDate.year, isoDate.month, isoDate.day);
     } else {

@@ -39,7 +39,7 @@ public class TimeFormatter {
         // TODO: Allow specification of locale, pivot year (set2DigitYearStart) for interpreting 2 digit years
         String str = m.get(textAnnotationField);
         Date d = format.parse(str);
-        return new Expressions.PrimitiveValue("GroundedTime", new SUTime.GroundedTime(new Instant(d.getTime())));
+        return new Expressions.PrimitiveValue("GroundedTime", new GroundedTime(new Instant(d.getTime())));
       } catch (java.text.ParseException ex) {
         return null;
       }
@@ -65,7 +65,7 @@ public class TimeFormatter {
         String str = m.get(textAnnotationField);
         // TODO: Allow specification of pivot year (withPivotYear) for interpreting 2 digit years
         DateTime d = formatter.parseDateTime(str);
-        return new Expressions.PrimitiveValue("GroundedTime", new SUTime.GroundedTime(d));
+        return new Expressions.PrimitiveValue("GroundedTime", new GroundedTime(d));
       } catch (IllegalArgumentException ex) {
         return null;
       }
@@ -179,7 +179,7 @@ public class TimeFormatter {
     }
     
     public Value apply(MatchResult m) {
-      SUTime.Temporal t = new SUTime.PartialTime();
+            Temporal t = new PartialTime();
       for (FormatComponent fc:builder.pieces) {
         int group = fc.getGroup();
         if (group > 0) {
@@ -226,7 +226,7 @@ public class TimeFormatter {
     }
     abstract protected StringBuilder appendRegex0(StringBuilder sb);
 
-    public SUTime.Temporal updateTemporal(SUTime.Temporal t, String fieldValueStr) { return t; }
+    public Temporal updateTemporal(Temporal t, String fieldValueStr) { return t; }
     public int getGroup() { return group; }
   }
 
@@ -237,14 +237,14 @@ public class TimeFormatter {
     public Integer parseValue(String str) { return null; }
     public DateTimeFieldType getDateTimeFieldType() { return fieldType; }
 
-    public SUTime.Temporal updateTemporal(SUTime.Temporal t, String fieldValueStr) {
+    public Temporal updateTemporal(Temporal t, String fieldValueStr) {
       DateTimeFieldType dt = getDateTimeFieldType();
       if (fieldValueStr != null && dt != null) {
         Integer v = parseValue(fieldValueStr);
         if (v != null) {
           Partial pt = new Partial();
           pt = JodaTimeUtils.setField(pt, dt, v);
-          t = t.intersect(new SUTime.PartialTime(pt));
+          t = t.intersect(new PartialTime(pt));
         } else {
           throw new IllegalArgumentException("Cannot interpret " + fieldValueStr + " for " + fieldType);
         }
@@ -319,7 +319,7 @@ public class TimeFormatter {
       return sb;
     }
 
-    public SUTime.Temporal updateTemporal(SUTime.Temporal t, String fieldValueStr) {
+    public Temporal updateTemporal(Temporal t, String fieldValueStr) {
       if (fieldValueStr != null) {
         for (NumericDateComponent c:possibleNumericDateComponents) {
           Integer v = c.parseValue(fieldValueStr);
@@ -487,7 +487,7 @@ public class TimeFormatter {
       }
       return offset;
     }
-    public SUTime.Temporal updateTemporal(SUTime.Temporal t, String fieldValueStr) {
+    public Temporal updateTemporal(Temporal t, String fieldValueStr) {
       int offset = parseOffsetMillis(fieldValueStr);
       DateTimeZone dtz = DateTimeZone.forOffsetMillis(offset);
       return t.setTimeZone(dtz);
@@ -531,7 +531,7 @@ public class TimeFormatter {
       return sb;
     }
 
-    public SUTime.Temporal updateTemporal(SUTime.Temporal t, String fieldValueStr) {
+    public Temporal updateTemporal(Temporal t, String fieldValueStr) {
       if (fieldValueStr != null) {
         DateTimeZone dtz = parseDateTimeZone(fieldValueStr);
         return t.setTimeZone(dtz);

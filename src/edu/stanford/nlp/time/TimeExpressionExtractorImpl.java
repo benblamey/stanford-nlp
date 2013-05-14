@@ -67,23 +67,23 @@ public class TimeExpressionExtractorImpl implements TimeExpressionExtractor {
 
   public List<CoreMap> extractTimeExpressionCoreMaps(CoreMap annotation, String docDate)
   {
-    SUTime.TimeIndex timeIndex = new SUTime.TimeIndex();
+        TimeIndex timeIndex = new TimeIndex();
     return extractTimeExpressionCoreMaps(annotation, docDate, timeIndex);
   }
 
-  public List<CoreMap> extractTimeExpressionCoreMaps(CoreMap annotation, String docDate, SUTime.TimeIndex timeIndex)
+  public List<CoreMap> extractTimeExpressionCoreMaps(CoreMap annotation, String docDate, TimeIndex timeIndex)
   {
     List<TimeExpression> timeExpressions = extractTimeExpressions(annotation, docDate);
     return toCoreMaps(annotation, timeExpressions, timeIndex);
   }
 
-  private List<CoreMap> toCoreMaps(CoreMap annotation, List<TimeExpression> timeExpressions, SUTime.TimeIndex timeIndex)
+  private List<CoreMap> toCoreMaps(CoreMap annotation, List<TimeExpression> timeExpressions, TimeIndex timeIndex)
   {
     if (timeExpressions == null) return null;
     List<CoreMap> coreMaps = new ArrayList<CoreMap>(timeExpressions.size());
     for (TimeExpression te:timeExpressions) {
       CoreMap cm = te.getAnnotation();
-      SUTime.Temporal temporal = te.getTemporal();
+        Temporal temporal = te.getTemporal();
       if (temporal != null) {
         String origText = annotation.get(CoreAnnotations.TextAnnotation.class);
         String text = cm.get(CoreAnnotations.TextAnnotation.class);
@@ -96,7 +96,7 @@ public class TimeExpressionExtractorImpl implements TimeExpressionExtractor {
         try {
           timexAttributes = temporal.getTimexAttributes(timeIndex);
           if (options.includeRange) {
-            SUTime.Temporal rangeTemporal = temporal.getRange();
+              Temporal rangeTemporal = temporal.getRange();
             if (rangeTemporal != null) {
               timexAttributes.put("range", rangeTemporal.toString());
             }
@@ -130,7 +130,7 @@ public class TimeExpressionExtractorImpl implements TimeExpressionExtractor {
 
     // TODO: docDate may not have century....
 
-    SUTime.Time docDate = null;
+      Time docDate = null;
     try {
       docDate = SUTime.parseDateTime(docDateStr);
     } catch (Exception e) {
@@ -201,15 +201,15 @@ public class TimeExpressionExtractorImpl implements TimeExpressionExtractor {
     return timeExpressions;
   }
 
-  private void resolveTimeExpression(CoreMap annotation, TimeExpression te, SUTime.Time docDate)
+  private void resolveTimeExpression(CoreMap annotation, TimeExpression te, Time docDate)
   {
-    SUTime.Temporal temporal = te.getTemporal();
+      Temporal temporal = te.getTemporal();
     if (temporal != null) {
       // TODO: use correct time for anchor
       try {
         int flags = timexPatterns.determineRelFlags(annotation, te);
         //int flags = 0;
-        SUTime.Temporal grounded = temporal.resolve(docDate, flags);
+          Temporal grounded = temporal.resolve(docDate, flags);
         if (grounded == null) {
           logger.warning("Error resolving " + temporal + ", using docDate=" + docDate);
         }
@@ -223,7 +223,7 @@ public class TimeExpressionExtractorImpl implements TimeExpressionExtractor {
     }
   }
 
-  private void resolveTimeExpressions(CoreMap annotation, List<TimeExpression> timeExpressions, SUTime.Time docDate)
+  private void resolveTimeExpressions(CoreMap annotation, List<TimeExpression> timeExpressions, Time docDate)
   {
     for (TimeExpression te:timeExpressions) {
       resolveTimeExpression(annotation, te, docDate);

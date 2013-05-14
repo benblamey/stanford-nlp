@@ -41,7 +41,7 @@ public class TimeExpression extends MatchedExpression {
   }
   //int tid;     // Time ID
 
-  SUTime.Temporal origTemporal;
+    Temporal origTemporal;
   //int anchorTimeId = -1;
 
   public TimeExpression(MatchedExpression expr)
@@ -50,7 +50,7 @@ public class TimeExpression extends MatchedExpression {
   }
 
   public TimeExpression(Interval<Integer> charOffsets, Interval<Integer> tokenOffsets,
-                        Function<CoreMap, SUTime.Temporal> temporalFunc, double priority, double weight)
+                        Function<CoreMap, Temporal> temporalFunc, double priority, double weight)
   {
     super(charOffsets, tokenOffsets, getSingleAnnotationExtractor(temporalFunc), priority, weight);
   }
@@ -63,12 +63,12 @@ public class TimeExpression extends MatchedExpression {
     }
   };
   
-  private static SingleAnnotationExtractor getSingleAnnotationExtractor(final Function<CoreMap, SUTime.Temporal> temporalFunc)
+  private static SingleAnnotationExtractor getSingleAnnotationExtractor(final Function<CoreMap, Temporal> temporalFunc)
   {
     SingleAnnotationExtractor extractFunc = new SingleAnnotationExtractor();
     extractFunc.valueExtractor = new Function<CoreMap, Value>() {
       public Value apply(CoreMap in) {
-        SUTime.Temporal t = temporalFunc.apply(in);
+                Temporal t = temporalFunc.apply(in);
         return new Expressions.PrimitiveValue("Temporal", t);
       }
     };
@@ -82,7 +82,7 @@ public class TimeExpression extends MatchedExpression {
 
   public boolean addMod()
   {
-    SUTime.Temporal t = getTemporal();
+        Temporal t = getTemporal();
     if (t != null) {
       if (t != SUTime.TIME_NONE_OK) {
         setTemporal(EnglishTimeExpressionPatterns.addMod(text, t));
@@ -124,13 +124,13 @@ public class TimeExpression extends MatchedExpression {
     return tid;
   }*/
 
-  public SUTime.Temporal getTemporal() {
-    if (value != null && value.get() instanceof SUTime.Temporal) {
-      return (SUTime.Temporal) value.get();
+  public Temporal getTemporal() {
+    if (value != null && value.get() instanceof Temporal) {
+      return (Temporal) value.get();
     }
     return null;
   }
-  public void setTemporal(SUTime.Temporal temporal) {
+  public void setTemporal(Temporal temporal) {
     this.value = new Expressions.PrimitiveValue("Temporal", temporal);
   }
 

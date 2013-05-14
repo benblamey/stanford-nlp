@@ -140,7 +140,7 @@ public class JollyDayHolidays implements Env.Binder {
     }
   }
 
-  public static class JollyHoliday extends SUTime.Time {
+  public static class JollyHoliday extends Time {
     HolidayManager holidayManager;
     de.jollyday.config.Holiday base;
     String label;
@@ -163,20 +163,20 @@ public class JollyDayHolidays implements Env.Binder {
     }
 
     public boolean isGrounded()  { return false; }
-    public SUTime.Time getTime() { return this; }
+    public Time getTime() { return this; }
     // TODO: compute duration/range => uncertainty of this time
-    public SUTime.Duration getDuration() { return SUTime.DURATION_NONE; }
-    public SUTime.Range getRange(int flags, SUTime.Duration granularity) { return new SUTime.Range(this,this); }
+    public Duration getDuration() { return SUTime.DURATION_NONE; }
+    public Range getRange(int flags, Duration granularity) { return new Range(this,this); }
     public String toISOString() { return base.toString(); }
-    public SUTime.Time intersect(SUTime.Time t) {
-      SUTime.Time resolved = resolve(t, 0);
+    public Time intersect(Time t) {
+            Time resolved = resolve(t, 0);
       if (resolved != this) {
         return resolved.intersect(t);
       } else {
         return super.intersect(t);
       }
     }
-    public SUTime.Time resolve(SUTime.Time t, int flags) {
+    public Time resolve(Time t, int flags) {
       Partial p = (t != null)? t.getJodaTimePartial():null;
       if (p != null) {
         if (JodaTimeUtils.hasField(p, DateTimeFieldType.year())) {
@@ -186,7 +186,7 @@ public class JollyDayHolidays implements Env.Binder {
           // Try to find this holiday
           for (de.jollyday.Holiday h:holidays) {
             if (h.getPropertiesKey().equals(base.getDescriptionPropertiesKey())) {
-              return new SUTime.PartialTime(this, new Partial(h.getDate()));
+              return new PartialTime(this, new Partial(h.getDate()));
             }
           }
         }
@@ -194,8 +194,8 @@ public class JollyDayHolidays implements Env.Binder {
       return this;
     }
 
-    public SUTime.Time add(SUTime.Duration offset) {
-      return new SUTime.RelativeTime(this, SUTime.TemporalOp.OFFSET, offset);
+    public Time add(Duration offset) {
+      return new RelativeTime(this, SUTime.TemporalOp.OFFSET, offset);
     }
   }
 }

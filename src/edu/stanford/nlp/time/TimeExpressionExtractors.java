@@ -22,14 +22,14 @@ import java.util.regex.Pattern;
  */
 public class TimeExpressionExtractors {
   private static final Logger logger = TimeExpressionExtractorImpl.logger;
-  static interface TemporalExtractor extends Function<CoreMap, SUTime.Temporal>
+  static interface TemporalExtractor extends Function<CoreMap, Temporal>
   {
-    public SUTime.Temporal apply(CoreMap in);
+    public Temporal apply(CoreMap in);
   }
 
   static class SequenceMatchExtractor implements Function<SequenceMatchResult<CoreMap>, TimeExpression>
   {
-    Function<CoreMap, SUTime.Temporal> extractor;
+    Function<CoreMap, Temporal> extractor;
     boolean includeNested;
     int group = 0;
 
@@ -48,7 +48,7 @@ public class TimeExpressionExtractors {
 
   static class StringMatchExtractor implements Function<MatchResult, TimeExpression>
   {
-    Function<CoreMap, SUTime.Temporal> extractor;
+    Function<CoreMap, Temporal> extractor;
     boolean includeNested;
     int group = 0;
 
@@ -117,10 +117,10 @@ public class TimeExpressionExtractors {
     int unitMatchGroup = -1;
     int underspecifiedValMatchGroup = -1;
     String defaultUnderspecifiedValue;
-    SUTime.Time beginTime;
-    SUTime.Time endTime;
+      Time beginTime;
+      Time endTime;
 
-    private DurationRule(EnglishTimeExpressionPatterns patterns, int valMatchGroup, int unitMatchGroup, SUTime.Time beginTime, SUTime.Time endTime) {
+    private DurationRule(EnglishTimeExpressionPatterns patterns, int valMatchGroup, int unitMatchGroup, Time beginTime, Time endTime) {
       this.patterns = patterns;
       this.valMatchGroup = valMatchGroup;
       this.unitMatchGroup = unitMatchGroup;
@@ -132,12 +132,12 @@ public class TimeExpressionExtractors {
       this(patterns, p, valMatchGroup, unitMatchGroup, SUTime.TIME_NONE, SUTime.TIME_NONE);
     }
 
-    public DurationRule(EnglishTimeExpressionPatterns patterns, Pattern p, int valMatchGroup, int unitMatchGroup, SUTime.Time beginTime, SUTime.Time endTime) {
+    public DurationRule(EnglishTimeExpressionPatterns patterns, Pattern p, int valMatchGroup, int unitMatchGroup, Time beginTime, Time endTime) {
       this(patterns, valMatchGroup, unitMatchGroup, beginTime, endTime);
       this.stringPattern = p;
     }
 
-    public DurationRule(EnglishTimeExpressionPatterns patterns, Pattern p, int valMatchGroup, int valMatchGroup2, int unitMatchGroup, SUTime.Time beginTime, SUTime.Time endTime) {
+    public DurationRule(EnglishTimeExpressionPatterns patterns, Pattern p, int valMatchGroup, int valMatchGroup2, int unitMatchGroup, Time beginTime, Time endTime) {
       this(patterns, valMatchGroup, unitMatchGroup, beginTime, endTime);
       this.valMatchGroup2 = valMatchGroup2;
       this.stringPattern = p;
@@ -147,12 +147,12 @@ public class TimeExpressionExtractors {
       this(patterns, p, valMatchGroup, unitMatchGroup, SUTime.TIME_NONE, SUTime.TIME_NONE);
     }
 
-    public DurationRule(EnglishTimeExpressionPatterns patterns, TokenSequencePattern p, int valMatchGroup, int unitMatchGroup, SUTime.Time beginTime, SUTime.Time endTime) {
+    public DurationRule(EnglishTimeExpressionPatterns patterns, TokenSequencePattern p, int valMatchGroup, int unitMatchGroup, Time beginTime, Time endTime) {
       this(patterns, valMatchGroup, unitMatchGroup, beginTime, endTime);
       this.tokenPattern = p;
     }
 
-    public DurationRule(EnglishTimeExpressionPatterns patterns, TokenSequencePattern p, int valMatchGroup, int valMatchGroup2, int unitMatchGroup, SUTime.Time beginTime, SUTime.Time endTime) {
+    public DurationRule(EnglishTimeExpressionPatterns patterns, TokenSequencePattern p, int valMatchGroup, int valMatchGroup2, int unitMatchGroup, Time beginTime, Time endTime) {
       this(patterns, valMatchGroup, unitMatchGroup, beginTime, endTime);
       this.valMatchGroup2 = valMatchGroup2;
       this.tokenPattern = p;
@@ -168,7 +168,7 @@ public class TimeExpressionExtractors {
       defaultUnderspecifiedValue = defaultValue;
     }
 
-    public SUTime.Temporal apply(CoreMap chunk) {
+    public Temporal apply(CoreMap chunk) {
       if (tokenPattern != null) {
         return apply(chunk.get(CoreAnnotations.NumerizedTokensAnnotation.class));
         //          return apply(chunk.get(CoreAnnotations.TokensAnnotation.class));
@@ -177,7 +177,7 @@ public class TimeExpressionExtractors {
       }
     }
 
-    public SUTime.Temporal apply(String expression) {
+    public Temporal apply(String expression) {
       Matcher matcher = stringPattern.matcher(expression);
       if (matcher.find()) {
         return extract(matcher);
@@ -185,7 +185,7 @@ public class TimeExpressionExtractors {
       return null;
     }
 
-    public SUTime.Temporal apply(List<? extends CoreMap> tokens) {
+    public Temporal apply(List<? extends CoreMap> tokens) {
       TokenSequenceMatcher matcher = tokenPattern.getMatcher(tokens);
       if (matcher.find()) {
         return extract(matcher);
@@ -193,19 +193,19 @@ public class TimeExpressionExtractors {
       return null;
     }
 
-    private SUTime.Temporal extract(MatchResult m)
+    private Temporal extract(MatchResult m)
     {
       String val = null;
       if (valMatchGroup >= 0) {
         val = m.group(valMatchGroup);
       }
-      SUTime.Duration d = extractDuration(m, val);
+        Duration d = extractDuration(m, val);
       if (valMatchGroup2 >= 0) {
         String val2 = m.group(valMatchGroup2);
         if (val2 != null) {
-          SUTime.Duration d2 = extractDuration(m, val2);
+            Duration d2 = extractDuration(m, val2);
           if (val != null && d != null) {
-            d = new SUTime.DurationRange(d, d2);
+            d = new DurationRange(d, d2);
           } else {
             d = d2;
           }
@@ -215,29 +215,29 @@ public class TimeExpressionExtractors {
       return addEndPoints(d);
     }
 
-    private SUTime.Temporal addEndPoints(SUTime.Duration d)
+    private Temporal addEndPoints(Duration d)
     {
-      SUTime.Temporal t = d;
+            Temporal t = d;
       if (d != null && (beginTime != null || endTime != null)) {
-        SUTime.Time b = beginTime;
-        SUTime.Time e = endTime;
+          Time b = beginTime;
+          Time e = endTime;
         // New so we get different time ids
         if (b == SUTime.TIME_REF_UNKNOWN) {
-          b = new SUTime.RefTime("UNKNOWN");
+          b = new RefTime("UNKNOWN");
         } else if (b == SUTime.TIME_UNKNOWN) {
-          b = new SUTime.SimpleTime("UNKNOWN");
+          b = new SimpleTime("UNKNOWN");
         }
         if (e == SUTime.TIME_REF_UNKNOWN) {
-          e = new SUTime.RefTime("UNKNOWN");
+          e = new RefTime("UNKNOWN");
         } else if (e == SUTime.TIME_UNKNOWN) {
-          e = new SUTime.SimpleTime("UNKNOWN");
+          e = new SimpleTime("UNKNOWN");
         }
-        t = new SUTime.Range(b,e,d);
+        t = new Range(b,e,d);
       }
       return t;
     }
 
-    private SUTime.Duration extractDuration(MatchResult results, String val) {
+    private Duration extractDuration(MatchResult results, String val) {
       String unit = null;
       if (unitMatchGroup >= 0) unit = results.group(unitMatchGroup);
       if (val == null) {
@@ -253,7 +253,7 @@ public class TimeExpressionExtractors {
         }
       }
 
-      SUTime.Duration d = patterns.getDuration(val, unit);
+        Duration d = patterns.getDuration(val, unit);
       if (d == null) {
         logger.warning("Unable to get duration with: val=" + val + ", unit=" + unit + ", matched=" + results.group());
       }
@@ -266,7 +266,7 @@ public class TimeExpressionExtractors {
     Pattern stringPattern;
     TokenSequencePattern tokenPattern;
 
-    public SUTime.Temporal apply(CoreMap chunk) {
+    public Temporal apply(CoreMap chunk) {
       if (tokenPattern != null) {
         if (chunk.containsKey(TimeExpression.ChildrenAnnotation.class)) {
           return apply(chunk.get(TimeExpression.ChildrenAnnotation.class));
@@ -281,7 +281,7 @@ public class TimeExpressionExtractors {
       }
     }
 
-    public SUTime.Temporal apply(String expression) {
+    public Temporal apply(String expression) {
       Matcher matcher = stringPattern.matcher(expression);
       if (matcher.find()) {
         return extract(matcher);
@@ -290,7 +290,7 @@ public class TimeExpressionExtractors {
       }
     }
 
-    public SUTime.Temporal apply(List<? extends CoreMap> tokens) {
+    public Temporal apply(List<? extends CoreMap> tokens) {
       TokenSequenceMatcher matcher = tokenPattern.getMatcher(tokens);
       if (matcher.find()) {
         return extract(matcher);
@@ -310,21 +310,21 @@ public class TimeExpressionExtractors {
       return sb.toString();
     }
 
-    protected abstract SUTime.Temporal extract(MatchResult results);
+    protected abstract Temporal extract(MatchResult results);
   }
 
   static class GenericTimePatternExtractor extends TimePatternExtractor  {
-    Function<MatchResult,SUTime.Temporal> tempFunc;
+    Function<MatchResult, Temporal> tempFunc;
 
     protected GenericTimePatternExtractor(
-            Function<MatchResult, SUTime.Temporal> tempFunc)
+            Function<MatchResult, Temporal> tempFunc)
     {
       this.tempFunc = tempFunc;
     }
 
     protected GenericTimePatternExtractor(
             TokenSequencePattern tokenPattern,
-            Function<MatchResult, SUTime.Temporal> tempFunc)
+            Function<MatchResult, Temporal> tempFunc)
     {
       this.tokenPattern = tokenPattern;
       this.tempFunc = tempFunc;
@@ -332,14 +332,14 @@ public class TimeExpressionExtractors {
 
     protected GenericTimePatternExtractor(
             Pattern stringPattern,
-            Function<MatchResult, SUTime.Temporal> tempFunc)
+            Function<MatchResult, Temporal> tempFunc)
     {
       this.stringPattern = stringPattern;
       this.tempFunc = tempFunc;
     }
 
 
-    protected SUTime.Temporal extract(MatchResult results) {
+    protected Temporal extract(MatchResult results) {
       try {
         return tempFunc.apply(results);
       } catch(org.joda.time.IllegalFieldValueException e) {
@@ -361,20 +361,20 @@ public class TimeExpressionExtractors {
   }
 
   // FUNCTIONS for getting temporals
-  static class TemporalConstFunc implements Function<MatchResult,SUTime.Temporal>
+  static class TemporalConstFunc implements Function<MatchResult, Temporal>
   {
-    SUTime.Temporal temporal;
+        Temporal temporal;
 
-    TemporalConstFunc(SUTime.Temporal temporal) {
+    TemporalConstFunc(Temporal temporal) {
       this.temporal = temporal;
     }
 
-    public SUTime.Temporal apply(MatchResult in) {
+    public Temporal apply(MatchResult in) {
       return temporal;
     }
   }
 
-  static class TemporalLookupFunc implements Function<MatchResult,SUTime.Temporal>
+  static class TemporalLookupFunc implements Function<MatchResult, Temporal>
   {
     EnglishTimeExpressionPatterns patterns;
     int group;
@@ -384,7 +384,7 @@ public class TimeExpressionExtractors {
       this.group = group;
     }
 
-    public SUTime.Temporal apply(MatchResult in) {
+    public Temporal apply(MatchResult in) {
       if (group >= 0) {
         String expr = in.group(group);
         if (expr != null) {
@@ -395,7 +395,7 @@ public class TimeExpressionExtractors {
     }
   }
 
-  static class TemporalGetTEFunc implements Function<MatchResult,SUTime.Temporal>
+  static class TemporalGetTEFunc implements Function<MatchResult, Temporal>
   {
     int group = 0;
     int nodeIndex = 0;
@@ -405,7 +405,7 @@ public class TimeExpressionExtractors {
       this.nodeIndex = nodeIndex;
     }
 
-    public SUTime.Temporal apply(MatchResult in) {
+    public Temporal apply(MatchResult in) {
       if (in instanceof SequenceMatchResult) {
         SequenceMatchResult<CoreMap> mr = (SequenceMatchResult<CoreMap>) (in);
         if (group >= 0) {
@@ -455,20 +455,20 @@ public class TimeExpressionExtractors {
     }
   }
 
-  static class TemporalComposeFunc implements Function<MatchResult,SUTime.Temporal>
+  static class TemporalComposeFunc implements Function<MatchResult, Temporal>
   {
     Function<MatchResult,SUTime.TemporalOp> opFunc;
-    Function<MatchResult,? extends SUTime.Temporal>[] argFuncs;
+    Function<MatchResult,? extends Temporal>[] argFuncs;
 
     TemporalComposeFunc(Function<MatchResult, SUTime.TemporalOp> opFunc,
-                        Function<MatchResult, ? extends SUTime.Temporal>... argFuncs) {
+                        Function<MatchResult, ? extends Temporal>... argFuncs) {
       this.opFunc = opFunc;
       this.argFuncs = argFuncs;
     }
 
-    public SUTime.Temporal apply(MatchResult in) {
+    public Temporal apply(MatchResult in) {
       SUTime.TemporalOp relOp = (opFunc != null)? opFunc.apply(in):null;
-      SUTime.Temporal[] args = new SUTime.Temporal[argFuncs.length];
+            Temporal[] args = new Temporal[argFuncs.length];
       for (int i = 0; i < argFuncs.length; i++) {
         args[i] = (argFuncs[i] != null)? argFuncs[i].apply(in):null;
       }
@@ -477,7 +477,7 @@ public class TimeExpressionExtractors {
     }
   }
 
-  static class TemporalComposeObjFunc implements Function<MatchResult,SUTime.Temporal>
+  static class TemporalComposeObjFunc implements Function<MatchResult, Temporal>
   {
     Function<MatchResult,SUTime.TemporalOp> opFunc;
     Function<MatchResult,?>[] argFuncs;
@@ -488,7 +488,7 @@ public class TimeExpressionExtractors {
       this.argFuncs = argFuncs;
     }
 
-    public SUTime.Temporal apply(MatchResult in) {
+    public Temporal apply(MatchResult in) {
       SUTime.TemporalOp relOp = (opFunc != null)? opFunc.apply(in):null;
       Object[] args = new Object[argFuncs.length];
       for (int i = 0; i < argFuncs.length; i++) {
@@ -499,7 +499,7 @@ public class TimeExpressionExtractors {
     }
   }
 
-  static TimePatternExtractor getTimeExtractor(SUTime.Temporal t)
+  static TimePatternExtractor getTimeExtractor(Temporal t)
   {
     return new GenericTimePatternExtractor(new TemporalConstFunc(t));
   }
@@ -516,18 +516,18 @@ public class TimeExpressionExtractors {
 
   static TimePatternExtractor getRelativeTimeExtractor(
           Pattern pattern,
-          Function<MatchResult, SUTime.Temporal> refFunc,
+          Function<MatchResult, Temporal> refFunc,
           Function<MatchResult, SUTime.TemporalOp> relOpFunc,
-          Function<MatchResult, SUTime.Temporal> relArgFunc)
+          Function<MatchResult, Temporal> relArgFunc)
   {
     return new GenericTimePatternExtractor(pattern, new TemporalComposeFunc(relOpFunc, refFunc, relArgFunc));
   }
 
   static TimePatternExtractor getRelativeTimeExtractor(
           TokenSequencePattern pattern,
-          Function<MatchResult, SUTime.Temporal> refFunc,
+          Function<MatchResult, Temporal> refFunc,
           Function<MatchResult, SUTime.TemporalOp> relOpFunc,
-          Function<MatchResult, SUTime.Temporal> relArgFunc)
+          Function<MatchResult, Temporal> relArgFunc)
   {
     return new GenericTimePatternExtractor(pattern, new TemporalComposeFunc(relOpFunc, refFunc, relArgFunc));
   }
@@ -535,7 +535,7 @@ public class TimeExpressionExtractors {
   static TimePatternExtractor getRelativeTimeLookupExtractor(
           EnglishTimeExpressionPatterns patterns,
           Pattern pattern,
-          SUTime.Temporal ref,
+          Temporal ref,
           SUTime.TemporalOp relOp,
           int relArgGroup)
   {
@@ -546,7 +546,7 @@ public class TimeExpressionExtractors {
   static TimePatternExtractor getRelativeTimeLookupExtractor(
           EnglishTimeExpressionPatterns patterns,
           TokenSequencePattern pattern,
-          SUTime.Temporal ref,
+          Temporal ref,
           SUTime.TemporalOp relOp,
           int relArgGroup)
   {
@@ -592,7 +592,7 @@ public class TimeExpressionExtractors {
             new IsoDateTimePatternFunc( yearGroup, monthGroup, dayGroup, hourGroup, minuteGroup, secGroup, yearPartial));
   }
 
-  static class IsoDateTimePatternFunc implements Function<MatchResult, SUTime.Temporal>  {
+  static class IsoDateTimePatternFunc implements Function<MatchResult, Temporal>  {
 
     boolean partialYear = false;
     int yearGroup = -1;
@@ -616,9 +616,9 @@ public class TimeExpressionExtractors {
       this.partialYear = partialYear;
     }
 
-    public SUTime.Temporal apply(MatchResult results) {
-      SUTime.IsoTime isoTime = null;
-      SUTime.IsoDate isoDate = null;
+    public Temporal apply(MatchResult results) {
+        IsoTime isoTime = null;
+        IsoDate isoDate = null;
       boolean hasDate = (yearGroup >= 0 || monthGroup >= 0 || dayGroup >= 0);
       boolean hasTime = (hourGroup >= 0 || minuteGroup >= 0 || secGroup >= 0);
       if (hasTime) {
@@ -626,7 +626,7 @@ public class TimeExpressionExtractors {
         String m = (minuteGroup >= 0)? results.group(minuteGroup):null;
         String s = (secGroup >= 0)? results.group(secGroup):null;
         if (h != null || m != null || s != null) {
-          isoTime = new SUTime.IsoTime(h,m,s);
+          isoTime = new IsoTime(h,m,s);
         }
       }
       if (hasDate) {
@@ -641,7 +641,7 @@ public class TimeExpressionExtractors {
         }
       }
       if (isoTime != null && isoDate != null) {
-        return new SUTime.IsoDateTime(isoDate, isoTime);
+        return new IsoDateTime(isoDate, isoTime);
       } else if (isoTime != null) {
         return isoTime;
       } else if (isoDate != null) {
@@ -664,11 +664,11 @@ public class TimeExpressionExtractors {
       this.hasTime = hasTime;
     }
 
-    public SUTime.Temporal apply(CoreMap chunk) {
+    public Temporal apply(CoreMap chunk) {
       return apply(chunk.get(CoreAnnotations.TextAnnotation.class));
     }
 
-    public SUTime.Temporal apply(String text) {
+    public Temporal apply(String text) {
       // TODO: TIMEZONE?
       DateTime dateTime = null;
       try {
@@ -680,17 +680,17 @@ public class TimeExpressionExtractors {
       assert(dateTime != null);
       if (hasDate && hasTime) {
         if (dateTime.getZone() != null) {
-          return new SUTime.GroundedTime(dateTime);
+          return new GroundedTime(dateTime);
         } else {
-          return new SUTime.IsoDateTime(
-                  new SUTime.IsoDate(dateTime.getYear(), dateTime.getMonthOfYear(), dateTime.getDayOfMonth()),
-                  new SUTime.IsoTime(dateTime.getHourOfDay(), dateTime.getMinuteOfHour(), dateTime.getSecondOfMinute()));
+          return new IsoDateTime(
+                  new IsoDate(dateTime.getYear(), dateTime.getMonthOfYear(), dateTime.getDayOfMonth()),
+                  new IsoTime(dateTime.getHourOfDay(), dateTime.getMinuteOfHour(), dateTime.getSecondOfMinute()));
         }
       } else if (hasTime) {
         // TODO: Millisecs?
-        return new SUTime.IsoTime(dateTime.getHourOfDay(), dateTime.getMinuteOfHour(), dateTime.getSecondOfMinute());
+        return new IsoTime(dateTime.getHourOfDay(), dateTime.getMinuteOfHour(), dateTime.getSecondOfMinute());
       } else if (hasDate) {
-        return new SUTime.IsoDate(dateTime.getYear(), dateTime.getMonthOfYear(), dateTime.getDayOfMonth());
+        return new IsoDate(dateTime.getYear(), dateTime.getMonthOfYear(), dateTime.getDayOfMonth());
       } else {
         return null;
       }
