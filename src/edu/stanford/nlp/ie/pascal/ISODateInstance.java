@@ -355,7 +355,7 @@ public class ISODateInstance {
 
   /**
    * Uses regexp matching to match  month, day, and year fields
-   * TODO: Find a way to mark what;s already been handled in the string
+   * TODO: Find a way to mark what's already been handled in the string
    */
   public boolean extractFields(String inputDate) {
 
