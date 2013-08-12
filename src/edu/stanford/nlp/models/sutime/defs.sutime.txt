@@ -1,3 +1,5 @@
+
+
   RefTime = { type: "CLASS", value: "edu.stanford.nlp.time.RefTime" }
   SimpleTime = { type: "CLASS", value: "edu.stanford.nlp.time.SimpleTime" }
   InexactTime = { type: "CLASS", value: "edu.stanford.nlp.time.InexactTime" }
@@ -97,21 +99,21 @@
   SPRING = {
       type: SEASON_OF_YEAR,
       label: "SP",
-      value: InexactTime( SPRING_EQUINOX, QUARTER, TimeRange( MARCH, JUNE, QUARTER ) ) }
+      value: InexactTime( SPRING_EQUINOX, QUARTER, TimeRange( MARCH, JUNE, QUARTER ), SPRING_DIST ) }
   SUMMER = {
       type: SEASON_OF_YEAR,
       label: "SU",
-      value: InexactTime( SUMMER_SOLSTICE, QUARTER, TimeRange( JUNE, SEPTEMBER, QUARTER ) )
+      value: InexactTime( SUMMER_SOLSTICE, QUARTER, TimeRange( JUNE, SEPTEMBER, QUARTER ), SUMMER_DIST )
   }
   FALL = {
       type: SEASON_OF_YEAR,
       label: "FA",
-      value: InexactTime( FALL_EQUINOX, QUARTER, TimeRange( SEPTEMBER, DECEMBER, QUARTER ) )
+      value: InexactTime( FALL_EQUINOX, QUARTER, TimeRange( SEPTEMBER, DECEMBER, QUARTER ), AUTUMN_DIST )
   }
   WINTER = {
       type: SEASON_OF_YEAR,
       label: "WI",
-      value: InexactTime( WINTER_SOLSTICE, QUARTER, TimeRange( DECEMBER, MARCH, QUARTER ) )
+      value: InexactTime( WINTER_SOLSTICE, QUARTER, TimeRange( DECEMBER, MARCH, QUARTER ), WINTER_DIST )
   }
 
   // Time of day

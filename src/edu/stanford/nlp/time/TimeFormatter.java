@@ -582,11 +582,18 @@ public class TimeFormatter {
     
     public String toTextRegex() {
       StringBuilder sb = new StringBuilder();
-      sb.append("\\b");
+      
+      // We wish to detect "Summer '11" as a temporal expression.
+      // We used to prepend with \\b (to mean "word boundary") the problem with this is that
+      // in Java, (') is considered a word boundary.
+      // The text is tokenized anyway, and removing this doesn't seem to have any ill effects.
+      // Ben Blamey blamey.ben@gmail.com  (Aug '13)
+      
+      // sb.append("\\b");
       for (FormatComponent fc:pieces) {
         fc.appendRegex(sb);
       }
-      sb.append("\\b");
+      // sb.append("\\b");
       return sb.toString();
     }
     
