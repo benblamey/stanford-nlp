@@ -2,6 +2,7 @@ package edu.stanford.nlp.util;
 
 import java.io.File;
 import java.lang.reflect.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -65,6 +66,7 @@ public class MetaClass {
     private Class<?>[] classParams;
     private Class<T> cl;
     private Constructor<T> constructor;
+    private Boolean constructorIsVarArgs = Boolean.FALSE;
 
     private static boolean samePrimitive(Class<?> a, Class<?> b){
       if(!a.isPrimitive() && !b.isPrimitive()) return false;
@@ -173,6 +175,48 @@ public class MetaClass {
       }
       // (filter:min)
       this.constructor = (Constructor<T>) argmin(potentials, distances, 0);
+      
+      if (this.constructor == null) {
+
+        // Partial support for var-args style parameters. Ben Blamey (blamey.ben@gmail.com)
+        for (Constructor<?> ctor : cl.getDeclaredConstructors())
+        {
+            Class<?>[] parameterTypes = ctor.getParameterTypes();
+
+            // There doesn't seem to be an flag to indicate varargs, 
+            // so we just whether the final parameter of array type is vararg.
+            if (!parameterTypes[parameterTypes.length - 1].isArray()) continue;
+            Class<?> arrayItemType = parameterTypes[parameterTypes.length - 1].getComponentType();
+            
+            boolean isOK = true;
+            for (int i = 0; i < this.classParams.length; i++) {
+                if (i < parameterTypes.length - 1) {
+                    if (!parameterTypes[i].isAssignableFrom(this.classParams[i])) 
+                    {
+                        isOK = false;
+                        continue;
+                    }
+                } else {
+                    if (!arrayItemType.isAssignableFrom(this.classParams[i])) 
+                    {
+                        isOK = false;
+                        continue;
+                    }
+                }
+            }
+
+            if (isOK) {
+                // Getting here means we can use this ctor.
+                if (this.constructor == null) {
+                    this.constructor = (Constructor<T>)ctor;
+                    this.constructorIsVarArgs = true; // Flag used during invocation.
+                } else {
+                    throw new NoSuchMethodException("It seems that more than one varags constructor is suitable - this is not supported!");
+                }
+            }
+        }
+      }
+      
       if (this.constructor == null) {
         StringBuilder b = new StringBuilder();
         b.append(classname).append("(");
@@ -226,14 +270,44 @@ public class MetaClass {
      */
     public T createInstance(Object... params) {
       try {
-        boolean accessible = true;
-        if(!constructor.isAccessible()){
-          accessible = false;
-          constructor.setAccessible(true);
-        }
-        T rtn = constructor.newInstance(params);
-        if(!accessible){ constructor.setAccessible(false); }
-        return rtn;
+          
+
+          // Partial support for var-args style parameters. Ben Blamey (blamey.ben@gmail.com)
+          if (this.constructorIsVarArgs) {
+
+              // Jon Skeet says: Forget about generics, just create an instance of the raw type.
+              // http://stackoverflow.com/questions/4818228/how-to-instantiate-a-java-util-arraylist-with-generic-class-using-reflection
+              
+
+              // We 'squash' the list of parameters, so that all those at the end, corresponding to the varargs parameter
+              // are made into a single parameter.
+              ArrayList<Object> paramsVararged = new ArrayList<Object>();
+              ArrayList varArgs = new ArrayList();// The varargs themselves.
+              for (int i = 0; i < params.length ; i++) {
+                  if (i < this.constructor.getParameterTypes().length - 1)
+                  {
+                      paramsVararged.add(params[i]);
+                  } else {
+                      varArgs.add(params[i]);
+                  }
+              }
+              
+              Class<?>[] parameterTypes = this.constructor.getParameterTypes();
+              Class<?> varArgTypeComponentType =  parameterTypes[this.constructor.getParameterTypes().length - 1];
+              paramsVararged.add(varArgs.toArray());
+              
+              T rtn = constructor.newInstance(paramsVararged.toArray());
+              return rtn;
+          } else {
+            boolean accessible = true;
+            if(!constructor.isAccessible()){
+              accessible = false;
+              constructor.setAccessible(true);
+            }
+            T rtn = constructor.newInstance(params);
+            if(!accessible){ constructor.setAccessible(false); }
+            return rtn;
+          }
       } catch (Exception e) {
         throw new ClassCreationException("MetaClass couldn't create " + constructor + " with args " + Arrays.toString(params), e);
       }
