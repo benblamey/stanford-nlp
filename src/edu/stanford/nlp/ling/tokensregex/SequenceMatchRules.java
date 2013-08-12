@@ -247,11 +247,13 @@ public class SequenceMatchRules {
     }
 
     public boolean extract(S in, List<T> out) {
-      return extractRule.extract(in, out);
+      boolean extract = extractRule.extract(in, out);
+      return extract;
     }
 
     public boolean accept(T obj) {
-      return filterRule.accept(obj);
+      boolean accept = filterRule.accept(obj);
+      return accept;
     }
   }
 
@@ -707,7 +709,8 @@ public class SequenceMatchRules {
 
     public boolean extract(CoreMap cm, List<O> out) {
       T field = (T) cm.get(annotationField);
-      return extractRule.extract(field, out);
+      boolean extract = extractRule.extract(field, out);
+      return extract;
     }
 
   }

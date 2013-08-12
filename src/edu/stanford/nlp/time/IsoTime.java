@@ -4,7 +4,7 @@ package edu.stanford.nlp.time;
 import org.joda.time.DateTimeFieldType;
 
 // Helper time class
-class IsoTime extends PartialTime {
+public class IsoTime extends PartialTime {
     public int hour = -1;
     public int minute = -1;
     public int second = -1;
