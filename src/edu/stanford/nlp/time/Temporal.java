@@ -1,5 +1,7 @@
 package edu.stanford.nlp.time;
 
+
+import edu.stanford.nlp.time.distributed.CanExpressTimeAsFunction;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -160,6 +162,10 @@ public abstract class Temporal implements Cloneable, Serializable {
         map.put(SUTime.TimexAttr.type.name(), getTimexType().name());
         if (mod != null) {
             map.put(SUTime.TimexAttr.mod.name(), mod);
+        }
+        if (this instanceof CanExpressTimeAsFunction) {
+            String expr = ((CanExpressTimeAsFunction) this).GetGNUPlot("x");
+            map.put("X-GNUPlot-Function", expr);
         }
         return map;
     }

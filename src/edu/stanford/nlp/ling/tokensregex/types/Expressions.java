@@ -686,16 +686,19 @@ public class Expressions {
         for (Expression param:params) {
           evaled.add(param.evaluate(env, args));
         }
-        return f.apply(env, evaled);
+        Value apply = f.apply(env, evaled);
+        return apply;
       } else if (funcValue instanceof Collection) {
         List<Value> evaled = new ArrayList<Value>();
         for (Expression param:params) {
-          evaled.add(param.evaluate(env, args));
+          Value evaluate = param.evaluate(env, args);
+          evaled.add(evaluate);
         }
         Collection<ValueFunction> fs = (Collection<ValueFunction>) funcValue;
         for (ValueFunction f:fs) {
           if (f.checkArgs(evaled)) {
-            return f.apply(env, evaled);
+            Value apply = f.apply(env, evaled);
+            return apply;
           }
         }
         StringBuilder sb = new StringBuilder();
@@ -711,7 +714,8 @@ public class Expressions {
         Class c = (Class) funcValue;
         List<Value> evaled = new ArrayList<Value>();
         for (Expression param:params) {
-          evaled.add(param.evaluate(env, args));
+          Value evaluate = param.evaluate(env, args);
+          evaled.add(evaluate);
         }
         Class[] paramTypes = new Class[params.size()];
         Object[] objs = new Object[params.size()];

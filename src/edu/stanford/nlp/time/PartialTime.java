@@ -1,8 +1,11 @@
 package edu.stanford.nlp.time;
 
-
+import edu.stanford.nlp.time.distributed.CanExpressTimeAsFunction;
+import edu.stanford.nlp.time.distributed.ITimeDensityFunction;
 import java.util.ArrayList;
 import java.util.List;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeField;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.DateTimeZone;
 import org.joda.time.DurationFieldType;
@@ -14,12 +17,14 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 
 // Partial time with Joda Time fields
-public class PartialTime extends Time {
+public class PartialTime extends Time implements CanExpressTimeAsFunction {
     // There is typically some uncertainty/imprecision in the time
+
     Partial base; // For representing partial absolute time
     // For representing partial absolute time
     DateTimeZone dateTimeZone; // Datetime zone associated with this time
     // Datetime zone associated with this time
+    private CanExpressTimeAsFunction _gnuFunc;
 
     // private static DateTimeFormatter isoDateFormatter =
     // ISODateTimeFormat.basicDate();
@@ -570,4 +575,72 @@ public class PartialTime extends Time {
     }
     private static final long serialVersionUID = 1;
 
+    public String GetGNUPlot(String millTimeSecondsExpr) {
+
+        if (_gnuFunc != null) {
+            return _gnuFunc.GetGNUPlot(millTimeSecondsExpr);
+        }
+
+        String func = "1";
+
+        for (DateTimeField f : this.base.getFields()) {
+            int get = this.base.get(f.getType());
+            DateTimeFieldType type = f.getType();
+
+            if (type == DateTimeFieldType.year()) {
+                func += "*(tm_year(" + millTimeSecondsExpr + ")==" + get + ")";
+            } else if (type == DateTimeFieldType.yearOfCentury()) {
+                // problems using gnuplot mod for tm_year(..).
+                // Assume >2000 instead.
+                get = get + 2000;
+                func += "*(tm_year(" + millTimeSecondsExpr + ")==" + get + ")";
+            } else if (type == DateTimeFieldType.monthOfYear()) {
+                func += "*(tm_mon(" + millTimeSecondsExpr + ")==" + get + ")";
+            } else if (type == DateTimeFieldType.dayOfMonth()) {
+                func += "*(tm_mday(" + millTimeSecondsExpr + ")==" + get + ")";
+            } else if (type == DateTimeFieldType.hourOfDay()) {
+                // ignore.
+            } else if (type == DateTimeFieldType.minuteOfHour()) {
+                // ignore.
+            } else {
+                throw new UnsupportedOperationException("field type not supported.");
+            }
+        }
+
+        return func;
+    }
+
+    public void SetFunction(CanExpressTimeAsFunction func) {
+        _gnuFunc = func;
+    }
+
+    public ITimeDensityFunction GettimeDensityFunction() {
+        if (_gnuFunc != null) {
+            return _gnuFunc.GettimeDensityFunction();
+        }
+        ITimeDensityFunction iTimeDensityFunction = new ITimeDensityFunction() {
+            public double GetDensity(DateTime time) {
+                for (DateTimeField f : base.getFields()) {
+                    int get = base.get(f.getType());
+                    DateTimeFieldType type = f.getType();
+
+                    if (type == DateTimeFieldType.year()) {
+                        if (get != time.getYear()) return 0;
+                    } else if (type == DateTimeFieldType.yearOfCentury()) {
+                        get = get + 2000;
+                        if (get != time.getYear()) return 0;
+                    } else if (type == DateTimeFieldType.monthOfYear()) {
+                        if (get != time.getMonthOfYear()) return 0;
+                    } else if (type == DateTimeFieldType.dayOfMonth()) {
+                        if (get != time.getDayOfMonth()) return 0;
+                   } else {
+                        throw new UnsupportedOperationException("field type not supported.");
+                   }
+                }
+                return 1;
+            }
+        };
+        
+        return iTimeDensityFunction;
+    }
 }

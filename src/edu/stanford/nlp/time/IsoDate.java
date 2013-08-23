@@ -1,13 +1,16 @@
 package edu.stanford.nlp.time;
 
 
+import edu.stanford.nlp.time.distributed.CanExpressTimeAsFunction;
+import edu.stanford.nlp.time.distributed.ITimeDensityFunction;
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeFieldType;
 
 /*
  * This is mostly a helper class but it is also the most standard type of date that people are
  * used to working with.
  */
-public class IsoDate extends PartialTime {
+public class IsoDate extends PartialTime implements CanExpressTimeAsFunction {
     // TODO: We are also using this class for partial dates
     //       with just decade or century, but it is difficult
     //       to get that information out without using the underlying joda classes
@@ -19,6 +22,7 @@ public class IsoDate extends PartialTime {
     public int month = -1;
     /** Day of Month */
     public int day = -1;
+    private CanExpressTimeAsFunction _gnuFunc;
 
     public IsoDate(int y, int m, int d) {
         this(null, y, m, d);
@@ -37,9 +41,20 @@ public class IsoDate extends PartialTime {
     public IsoDate(Number y, Number m, Number d) {
         this(y, m, d, null, null);
     }
+    
+    public IsoDate(Number y, Number m, Number d, CanExpressTimeAsFunction func) {
+        this(y, m, d, null, null);
+        _gnuFunc = func;
+    }
 
     public IsoDate(Number y, Number m, Number d, Number era, Boolean yearEraAdjustNeeded) {
         this.year = (y != null) ? y.intValue() : -1;
+        
+        // Two-Digit Years.
+        if (this.year < 99 && this.year > 0) {
+            this.year = 2000 + this.year;
+        }
+        
         this.month = (m != null) ? m.intValue() : -1;
         this.day = (d != null) ? d.intValue() : -1;
         this.era = (era != null) ? era.intValue() : SUTime.ERA_UNKNOWN;
@@ -68,6 +83,12 @@ public class IsoDate extends PartialTime {
                 // AD
             }
             if (y.contains(SUTime.PAD_FIELD_UNKNOWN)) {
+                if (y.matches("XX[0-9][0-9]")) {
+                    int yearX = Integer.parseInt(y.substring(2, 4));
+                    year = (yearX > 50 ? 1900 : 2000) + yearX;
+                } else {
+                    System.err.println("Could not parse year: " + y.toString());
+                }
             } else {
                 year = Integer.parseInt(y);
             }
@@ -181,5 +202,55 @@ public class IsoDate extends PartialTime {
         initBase();
     }
     private static final long serialVersionUID = 1;
+
+    @Override
+    public String GetGNUPlot(String millTimeSecondsExpr) {
+        
+        if (this._gnuFunc != null) {
+            return _gnuFunc.GetGNUPlot(millTimeSecondsExpr);
+        }
+        
+        String expr = "1";
+
+        if (this.day > 0) {
+            expr += "*(tm_mday(" + millTimeSecondsExpr + ")==" + Integer.toString(this.day) + ")";
+        }
+        if (this.month > 0) {
+            expr += "*(tm_mon(" + millTimeSecondsExpr + ")==" + Integer.toString(this.month) + ")";
+        }
+        if (this.year > 0) {
+            expr += "*(tm_year(" + millTimeSecondsExpr + ")==" + Integer.toString(this.year) + ")";
+        }
+        return expr;
+    }
+
+    public void SetFunction(CanExpressTimeAsFunction func) {
+        _gnuFunc = func;
+    }
+
+    public ITimeDensityFunction GettimeDensityFunction() {
+
+        if (this._gnuFunc != null) {
+            return _gnuFunc.GettimeDensityFunction();
+        }
+        
+        ITimeDensityFunction iTimeDensityFunction = new ITimeDensityFunction() {
+
+            public double GetDensity(DateTime time) {
+                if ((day > 0) && (time.getDayOfMonth() != day)) {
+                    return 0;
+                }
+                if ((month > 0) && (time.getMonthOfYear() != month)) {
+                    return 0;
+                }
+                if ((year > 0) && (time.getYear() != year)) {
+                    return 0;
+                }
+                return 1;
+            }
+        };
+        
+        return iTimeDensityFunction;
+    }
 
 }

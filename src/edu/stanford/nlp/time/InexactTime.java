@@ -1,14 +1,17 @@
 package edu.stanford.nlp.time;
 
 
+import edu.stanford.nlp.time.distributed.CanExpressTimeAsFunction;
+import edu.stanford.nlp.time.distributed.ITimeDensityFunction;
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Instant;
 import org.joda.time.Partial;
 
 /**
- * Inexact time, not sure when this is, but have some quesses
+ * Inexact time, not sure when this is, but have some guesses
  */
-public class InexactTime extends Time {
+public class InexactTime extends Time implements CanExpressTimeAsFunction {
     Time base; // best guess
     // best guess
     Duration duration; // how long the time lasts
@@ -16,6 +19,10 @@ public class InexactTime extends Time {
     Range range; // guess at range in which the time occurs
     // guess at range in which the time occurs
 
+    int meanDay = -1;
+    int sdDays = -1;
+    private CanExpressTimeAsFunction _func;
+    
     public InexactTime(Partial partial) {
         this.base = new PartialTime(partial);
         this.range = base.getRange();
@@ -28,7 +35,37 @@ public class InexactTime extends Time {
         this.range = range;
         this.approx = true;
     }
+    
+    public InexactTime(Time base, Duration duration, Range range, CanExpressTimeAsFunction func) {
+        this.base = base;
+        this.duration = duration;
+        this.range = range;
+        this.approx = true;
+        this._func = func;
+        
+    }
+    
+    public InexactTime(Time base, Duration duration, Range range, Integer meanDay, Integer sdDays) {
+        this.base = base;
+        this.duration = duration;
+        this.range = range;
+        this.approx = true;
+        
+        this.meanDay = meanDay.intValue();
+        this.sdDays = sdDays.intValue();
+    }
 
+
+    public InexactTime(InexactTime t, Time base, Duration duration, Range range, CanExpressTimeAsFunction func) {
+        super(t);
+        this.base = base;
+        this.duration = duration;
+        this.range = range;
+        this.approx = true;
+        this._func = func;
+    }
+
+    
     public InexactTime(InexactTime t, Time base, Duration duration, Range range) {
         super(t);
         this.base = base;
@@ -159,5 +196,32 @@ public class InexactTime extends Time {
         return sb.toString();
     }
     private static final long serialVersionUID = 1;
+
+    public String GetGNUPlot(String millTimeSecondsExpr) {
+        
+        if (_func != null) {
+            return _func.GetGNUPlot(millTimeSecondsExpr);
+        }
+        
+        if (this.meanDay < 0 || this.sdDays < 0) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+        
+        String mean = Integer.toString(meanDay);
+        String st = Integer.toString(sdDays);
+        String x = "tm_yday("+millTimeSecondsExpr+")";
+        
+        String expr = "exp(  -("+x+"-"+mean+")**2/(2 * "+st+"**2) )";
+        return expr;
+    }
+
+    public void SetFunction(CanExpressTimeAsFunction func) {
+        // Can be null.
+        _func = func;
+    }
+
+    public ITimeDensityFunction GettimeDensityFunction() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
 }

@@ -6,7 +6,10 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import edu.stanford.nlp.util.Pair;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 /**
  * Stores one TIMEX3 expression.  This class is used for both TimeAnnotator and
@@ -114,6 +117,11 @@ public class Timex implements Serializable {
    * that anchors this duration/range (-1 is not present).
    */
   private int endPoint;
+  
+  /**
+   * Additional attributes to write to the XML element.
+   */
+  private NamedNodeMap otherAttributes;
 
   public String value() {
     return val;
@@ -173,18 +181,27 @@ public class Timex implements Serializable {
     this.xml = xml;
     this.text = element.getTextContent();
 
+    
+    
     // Mandatory attributes
     this.tid = XMLUtils.getAttribute(element, "tid");
+    element.removeAttribute("tid");
+    
     this.val = XMLUtils.getAttribute(element, "VAL");
+    element.removeAttribute("VAL");
     if (this.val == null) {
       this.val = XMLUtils.getAttribute(element, "value");
+      element.removeAttribute("value");
     }
 
     this.altVal = XMLUtils.getAttribute(element, "alt_value");
+    element.removeAttribute("alt_value");
 
     this.type = XMLUtils.getAttribute(element, "type");
+    element.removeAttribute("type");
     if (type == null) {
       this.type = XMLUtils.getAttribute(element, "TYPE");
+      element.removeAttribute("TYPE");
     }
     // if (this.type != null) {
     // this.type = this.type.intern();
@@ -192,9 +209,12 @@ public class Timex implements Serializable {
 
     // Optional attributes
     String beginPoint = XMLUtils.getAttribute(element, "beginPoint");
+    element.removeAttribute("beginPoint");
     this.beginPoint = (beginPoint == null || beginPoint.length() == 0)? -1 : Integer.parseInt(beginPoint.substring(1));
     String endPoint = XMLUtils.getAttribute(element, "endPoint");
+    element.removeAttribute("endPoint");
     this.endPoint = (endPoint == null || endPoint.length() == 0)? -1 : Integer.parseInt(endPoint.substring(1));
+    this.otherAttributes = element.getAttributes();
   }
 
   public String toString() {
@@ -260,6 +280,14 @@ public class Timex implements Serializable {
     if (text != null) {
       element.setTextContent(text);
     }
+
+    // Copy over any remaining attributes.
+    for (int i = 0; i < this.otherAttributes.getLength(); i++) {
+          Attr item = (Attr)this.otherAttributes.item(i);
+          item = (Attr)item.cloneNode(false); // Clone the attribute (the clone doesn't have a parent, and so can be used elsewhere)
+          element.setAttributeNode(item);
+    }
+    
     return element;
   }
 
@@ -534,4 +562,13 @@ public class Timex implements Serializable {
         .get(Calendar.MINUTE), c.get(Calendar.SECOND));
     return date;
   }
+
+    public String getGNUPlot() {
+        Node namedItem = this.otherAttributes.getNamedItem("X-GNUPlot-Function");
+        if (namedItem != null) {
+            return namedItem.getNodeValue();
+        } else {
+            return null;
+        }
+    }
 }
