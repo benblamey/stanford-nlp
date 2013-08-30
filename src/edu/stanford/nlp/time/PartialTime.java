@@ -24,7 +24,7 @@ public class PartialTime extends Time implements CanExpressTimeAsFunction {
     // For representing partial absolute time
     DateTimeZone dateTimeZone; // Datetime zone associated with this time
     // Datetime zone associated with this time
-    private CanExpressTimeAsFunction _gnuFunc;
+    private ITimeDensityFunction _gnuFunc;
 
     // private static DateTimeFormatter isoDateFormatter =
     // ISODateTimeFormat.basicDate();
@@ -575,49 +575,15 @@ public class PartialTime extends Time implements CanExpressTimeAsFunction {
     }
     private static final long serialVersionUID = 1;
 
-    public String GetGNUPlot(String millTimeSecondsExpr) {
-
-        if (_gnuFunc != null) {
-            return _gnuFunc.GetGNUPlot(millTimeSecondsExpr);
-        }
-
-        String func = "1";
-
-        for (DateTimeField f : this.base.getFields()) {
-            int get = this.base.get(f.getType());
-            DateTimeFieldType type = f.getType();
-
-            if (type == DateTimeFieldType.year()) {
-                func += "*(tm_year(" + millTimeSecondsExpr + ")==" + get + ")";
-            } else if (type == DateTimeFieldType.yearOfCentury()) {
-                // problems using gnuplot mod for tm_year(..).
-                // Assume >2000 instead.
-                get = get + 2000;
-                func += "*(tm_year(" + millTimeSecondsExpr + ")==" + get + ")";
-            } else if (type == DateTimeFieldType.monthOfYear()) {
-                func += "*(tm_mon(" + millTimeSecondsExpr + ")==" + get + ")";
-            } else if (type == DateTimeFieldType.dayOfMonth()) {
-                func += "*(tm_mday(" + millTimeSecondsExpr + ")==" + get + ")";
-            } else if (type == DateTimeFieldType.hourOfDay()) {
-                // ignore.
-            } else if (type == DateTimeFieldType.minuteOfHour()) {
-                // ignore.
-            } else {
-                throw new UnsupportedOperationException("field type not supported.");
-            }
-        }
-
-        return func;
-    }
-
-    public void SetFunction(CanExpressTimeAsFunction func) {
+    public void SetFunction(ITimeDensityFunction func) {
         _gnuFunc = func;
     }
 
     public ITimeDensityFunction GettimeDensityFunction() {
         if (_gnuFunc != null) {
-            return _gnuFunc.GettimeDensityFunction();
+            return _gnuFunc;
         }
+        
         ITimeDensityFunction iTimeDensityFunction = new ITimeDensityFunction() {
             public double GetDensity(DateTime time) {
                 for (DateTimeField f : base.getFields()) {
@@ -638,6 +604,38 @@ public class PartialTime extends Time implements CanExpressTimeAsFunction {
                    }
                 }
                 return 1;
+            }
+
+            @Override
+            public String GetGNUPlot(String millTimeSecondsExpr) {
+
+                String func = "1";
+
+                for (DateTimeField f : base.getFields()) {
+                    int get = base.get(f.getType());
+                    DateTimeFieldType type = f.getType();
+
+                    if (type == DateTimeFieldType.year()) {
+                        func += "*(tm_year(" + millTimeSecondsExpr + ")==" + get + ")";
+                    } else if (type == DateTimeFieldType.yearOfCentury()) {
+                        // problems using gnuplot mod for tm_year(..).
+                        // Assume >2000 instead.
+                        get = get + 2000;
+                        func += "*(tm_year(" + millTimeSecondsExpr + ")==" + get + ")";
+                    } else if (type == DateTimeFieldType.monthOfYear()) {
+                        func += "*(tm_mon(" + millTimeSecondsExpr + ")==" + get + ")";
+                    } else if (type == DateTimeFieldType.dayOfMonth()) {
+                        func += "*(tm_mday(" + millTimeSecondsExpr + ")==" + get + ")";
+                    } else if (type == DateTimeFieldType.hourOfDay()) {
+                        // ignore.
+                    } else if (type == DateTimeFieldType.minuteOfHour()) {
+                        // ignore.
+                    } else {
+                        throw new UnsupportedOperationException("field type not supported.");
+                    }
+                }
+
+                return func;
             }
         };
         

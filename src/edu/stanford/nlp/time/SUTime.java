@@ -1,6 +1,11 @@
 package edu.stanford.nlp.time;
 
 import edu.stanford.nlp.ling.tokensregex.types.Expressions;
+import edu.stanford.nlp.time.distributed.AnnualNormalDistribution;
+import edu.stanford.nlp.time.distributed.AnnualUniformDistribution;
+import edu.stanford.nlp.time.distributed.CanExpressTimeAsFunction;
+import edu.stanford.nlp.time.distributed.ITimeDensityFunction;
+import edu.stanford.nlp.time.distributed.IntersectTimeExpression;
 import edu.stanford.nlp.util.*;
 
 import edu.stanford.nlp.util.Interval;
@@ -13,6 +18,9 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.naming.OperationNotSupportedException;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import edu.stanford.nlp.time.distributed.SumTimeExpression;
 
 /**
  * SUTime is a collection of data structures to represent various temporal
@@ -293,15 +301,73 @@ public class SUTime {
     public static final Time SUMMER_SOLSTICE = createTemporal(StandardTemporalType.DAY_OF_YEAR, "SU", new InexactTime(new Range(new IsoDate(-1, 6, 20), new IsoDate(-1, 6, 21))));
     public static final Time WINTER_SOLSTICE = createTemporal(StandardTemporalType.DAY_OF_YEAR, "WI", new InexactTime(new Range(new IsoDate(-1, 12, 21), new IsoDate(-1, 12, 22))));
     public static final Time FALL_EQUINOX = createTemporal(StandardTemporalType.DAY_OF_YEAR, "FA", new InexactTime(new Range(new IsoDate(-1, 9, 22), new IsoDate(-1, 9, 23))));
+
+  
+    public static final ITimeDensityFunction WINTER_DIST = new SumTimeExpression(
+	new AnnualNormalDistribution(0.332196332118026,380435856.707,1204042.11586607),
+	new AnnualNormalDistribution(0.312814001825274,408869365.796,973033.867210455),
+	new AnnualNormalDistribution(0.193038509037954,382603192.964,983967.159767546),
+	new AnnualNormalDistribution(0.0641220995690921,406160504.975,1204457.26860019),
+	new AnnualNormalDistribution(0.0301735966610396,385855838.534,1029512.19745316),
+	new AnnualUniformDistribution(0.0227302824848729),
+	new AnnualNormalDistribution(0.0123090667330343,395531634.934,916827.335427853),
+	new AnnualNormalDistribution(0.0120672895612644,402849211.26,1274023.0400464),
+	new AnnualNormalDistribution(0.00832576518606784,393458187.757,1234243.63056689),
+	new AnnualNormalDistribution(0.00672095981173758,399439509.719,1116218.20978957),
+	new AnnualNormalDistribution(0.0055020970116363,389454260.529,1333408.97911959)
+    );
+
+    public static final ITimeDensityFunction SPRING_DIST = new SumTimeExpression(
+            new AnnualNormalDistribution(0.445594445141809,386379881.414,991185.498830499),
+            new AnnualNormalDistribution(0.19025635242184,389245545.056,1054577.27732744),
+            new AnnualNormalDistribution(0.175453906063836,384232020.181,1061101.81507672),
+            new AnnualNormalDistribution(0.0428926940032708,392211311.582,1077406.60190393),
+            new AnnualNormalDistribution(0.0360612062781602,380724265.461,1078338.81630031),
+            new AnnualNormalDistribution(0.0247791089817192,399797557.76,1126012.75149293),
+            new AnnualUniformDistribution(0.0237395344272946),
+            new AnnualNormalDistribution(0.0228545391156814,401908218.951,1224359.07320738),
+            new AnnualNormalDistribution(0.0156215705145877,405614193.965,1178811.14314599),
+            new AnnualNormalDistribution(0.0127034975729927,396201016.146,1198461.43779122),
+            new AnnualNormalDistribution(0.0100431454788087,408554018.951,1467723.98999854)
+    );
+
+    public static final ITimeDensityFunction SUMMER_DIST = new SumTimeExpression(
+            new AnnualNormalDistribution(0.293868748378889,396083115.724,1116628.25886232),
+            new AnnualNormalDistribution(0.222956545854207,393264030.565,1078080.63909611),
+            new AnnualNormalDistribution(0.214902872150514,398865458.907,1003586.73967376),
+            new AnnualNormalDistribution(0.0690232340001536,390438381.21,1116382.71592155),
+            new AnnualNormalDistribution(0.0470826760884972,401758633.467,1176809.23694348),
+            new AnnualNormalDistribution(0.0344610163753501,380411765.066,984242.014310694),
+            new AnnualNormalDistribution(0.0329109477404667,386793588.584,1122219.18042397),
+            new AnnualNormalDistribution(0.0266154531401581,383403169.815,1186407.73752488),
+            new AnnualUniformDistribution(0.0242948040188496),
+            new AnnualNormalDistribution(0.0188585288044682,408814847.28,1110599.4137298),
+            new AnnualNormalDistribution(0.0150251734484461,405421429.033,1279296.83868521)
+    );
+
+    public static final ITimeDensityFunction AUTUMN_DIST = new SumTimeExpression(
+            new AnnualNormalDistribution(0.438693232224144,405055864.72,1029853.22456299),
+            new AnnualNormalDistribution(0.398134343882415,403049902.031,955829.313707557),
+            new AnnualNormalDistribution(0.0499697872804527,407492850.286,1008379.93605087),
+            new AnnualNormalDistribution(0.0403661010267748,400377442.65,902986.283917415),
+            new AnnualUniformDistribution(0.0216324261508443),
+            new AnnualNormalDistribution(0.0168121058948726,389670711.21,1061801.67890577),
+            new AnnualNormalDistribution(0.0117498607445376,386840040.415,1083522.80107301),
+            new AnnualNormalDistribution(0.008654176839992,392102398.075,831428.445296124),
+            new AnnualNormalDistribution(0.00591311929296498,380385559.062,1239565.99499243),
+            new AnnualNormalDistribution(0.00575079251490961,383508833.384,1306464.87001057),
+            new AnnualNormalDistribution(0.00232405414809239,397072500.45,1189331.47192302)
+    );
+  
     // Dates for seasons are rough with respect to northern hemisphere
     public static final Time SPRING = createTemporal(StandardTemporalType.SEASON_OF_YEAR, "SP",
-            new InexactTime(SPRING_EQUINOX, QUARTER, new Range(SUTime.MARCH, SUTime.JUNE, SUTime.QUARTER)));
+            new InexactTime(SPRING_EQUINOX, QUARTER, new Range(SUTime.MARCH, SUTime.JUNE, SUTime.QUARTER), SPRING_DIST));
     public static final Time SUMMER = createTemporal(StandardTemporalType.SEASON_OF_YEAR, "SU",
-            new InexactTime(SUMMER_SOLSTICE, QUARTER, new Range(SUTime.JUNE, SUTime.SEPTEMBER, SUTime.QUARTER)));
+            new InexactTime(SUMMER_SOLSTICE, QUARTER, new Range(SUTime.JUNE, SUTime.SEPTEMBER, SUTime.QUARTER), SUMMER_DIST )); 
     public static final Time FALL = createTemporal(StandardTemporalType.SEASON_OF_YEAR, "FA",
-            new InexactTime(FALL_EQUINOX, QUARTER, new Range(SUTime.SEPTEMBER, SUTime.DECEMBER, SUTime.QUARTER)));
+            new InexactTime(FALL_EQUINOX, QUARTER, new Range(SUTime.SEPTEMBER, SUTime.DECEMBER, SUTime.QUARTER), AUTUMN_DIST));
     public static final Time WINTER = createTemporal(StandardTemporalType.SEASON_OF_YEAR, "WI",
-            new InexactTime(WINTER_SOLSTICE, QUARTER, new Range(SUTime.DECEMBER, SUTime.MARCH, SUTime.QUARTER)));
+            new InexactTime(WINTER_SOLSTICE, QUARTER, new Range(SUTime.DECEMBER, SUTime.MARCH, SUTime.QUARTER), WINTER_DIST));
     // Time of day
     public static final PartialTime NOON = createTemporal(StandardTemporalType.TIME_OF_DAY, "MI", new IsoTime(12, 0, -1));
     public static final PartialTime MIDNIGHT = createTemporal(StandardTemporalType.TIME_OF_DAY, new IsoTime(0, 0, -1));
@@ -504,6 +570,9 @@ public class SUTime {
         // (successor) Next week/day/...
         NEXT {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
+                
+                System.out.println("Op NEXT applied to: " + arg1 + " " + arg2);
+                
                 if (arg2 == null) {
                     return arg1;
                 }
@@ -523,6 +592,9 @@ public class SUTime {
         // This coming week/friday
         NEXT_IMMEDIATE {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
+                
+                System.out.println("Op NEXT_IMMEDIATE applied to: " + arg1 + " " + arg2);
+                
                 if (arg1 == null) {
                     return new RelativeTime(NEXT_IMMEDIATE, arg2);
                 }
@@ -556,6 +628,9 @@ public class SUTime {
         // and apply to arg2)
         THIS {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
+                
+                System.out.println("Op THIS applied to: " + arg1 + " " + arg2);
+                
                 if (arg1 == null) {
                     return new RelativeTime(THIS, arg2, flags);
                 }
@@ -574,6 +649,9 @@ public class SUTime {
         // (predecessor) Previous week/day/...
         PREV {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
+                
+                System.out.println("Op PREV applied to: " + arg1 + " " + arg2);
+                
                 if (arg2 == null) {
                     return arg1;
                 }
@@ -593,6 +671,9 @@ public class SUTime {
         // This past week/friday
         PREV_IMMEDIATE {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
+                
+                System.out.println("Op PREV_IMMEDIATE applied to: " + arg1 + " " + arg2);
+                
                 if (arg1 == null) {
                     return new RelativeTime(PREV_IMMEDIATE, arg2);
                 }
@@ -624,6 +705,9 @@ public class SUTime {
         },
         UNION {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
+                
+                System.out.println("Op UNION applied to: " + arg1 + " " + arg2);
+                
                 if (arg1 == null) {
                     return arg2;
                 }
@@ -636,6 +720,9 @@ public class SUTime {
         },
         INTERSECT {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
+                
+                System.out.println("Op INTERSECT applied to: " + arg1 + " " + arg2);
+                
                 if (arg1 == null) {
                     return arg2;
                 }
@@ -646,15 +733,40 @@ public class SUTime {
                 if (t == null) {
                     t = arg2.intersect(arg1);
                 }
-                return t;
+                
                 // throw new
                 // UnsupportedOperationException("INTERSECT not implemented for arg1=" +
                 // arg1.getClass() + ", arg2="+arg2.getClass());
+                
+                ITimeDensityFunction timeFunction = null;
+                if ((arg1 instanceof CanExpressTimeAsFunction) && (arg2 instanceof CanExpressTimeAsFunction)) {
+                    timeFunction = new IntersectTimeExpression((CanExpressTimeAsFunction) arg1, (CanExpressTimeAsFunction) arg2);
+                } else if ((arg1 instanceof CanExpressTimeAsFunction) || (arg2 instanceof CanExpressTimeAsFunction)) {
+                    System.err.println("arg1 is "+arg1.getClass().toString());
+                    System.err.println("arg2 is "+arg2.getClass().toString());
+                    throw new UnsupportedOperationException();
+                }
+            
+                if (timeFunction != null) {
+                    if (!(t instanceof CanExpressTimeAsFunction) ) {
+                        System.out.println("t: " +t);
+                        throw new UnsupportedOperationException();
+                    } else {
+                        ((CanExpressTimeAsFunction)t).SetFunction(timeFunction);
+                    }
+                }
+               
+                System.out.println("Returning object with hash:" + System.identityHashCode(t));
+                return t;
             }
+
         },
         // arg2 is "in" arg1, composite datetime
         IN {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
+                
+                System.out.println("Op IN applied to: " + arg1 + " " + arg2);
+                
                 if (arg1 == null) {
                     return arg2;
                 }
@@ -668,6 +780,9 @@ public class SUTime {
         },
         OFFSET {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
+                
+                System.out.println("Op OFFSET applied to: " + arg1 + " " + arg2);
+                
                 if (arg1 == null) {
                     return new RelativeTime(OFFSET, arg2);
                 }
@@ -682,6 +797,8 @@ public class SUTime {
         },
         MINUS {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
+                System.out.println("Op MINUS applied to: " + arg1 + " " + arg2);
+                
                 if (arg1 == null) {
                     return arg2;
                 }
@@ -701,6 +818,8 @@ public class SUTime {
         },
         PLUS {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
+                
+                System.out.println("Op PLUS applied to: " + arg1 + " " + arg2);
                 if (arg1 == null) {
                     return arg2;
                 }
@@ -720,6 +839,9 @@ public class SUTime {
         },
         MIN {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
+                
+                System.out.println("Op MIN applied to: " + arg1 + " " + arg2);
+                
                 if (arg1 == null) {
                     return arg2;
                 }
@@ -737,6 +859,9 @@ public class SUTime {
         },
         MAX {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
+                
+                System.out.println("Op MAX applied to: " + arg1 + " " + arg2);
+                
                 if (arg1 == null) {
                     return arg2;
                 }
@@ -753,7 +878,9 @@ public class SUTime {
             }
         },
         MULTIPLY {
+            
             public Temporal apply(Duration d, int scale) {
+                System.out.println("Op MULTIPLY invoked with: " + d + " " + scale);
                 if (d == null) {
                     return null;
                 }
@@ -838,6 +965,9 @@ public class SUTime {
         },
         ADD_MODIFIER {
             public Temporal apply(Temporal t, String modifier) {
+                
+                System.out.println("Op ADD_MODIFIER invoked with: " + t + " " + modifier);
+                
                 return t.addMod(modifier);
             }
 

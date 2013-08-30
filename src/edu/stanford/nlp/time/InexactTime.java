@@ -21,7 +21,7 @@ public class InexactTime extends Time implements CanExpressTimeAsFunction {
 
     int meanDay = -1;
     int sdDays = -1;
-    private CanExpressTimeAsFunction _func;
+    private ITimeDensityFunction _func;
     
     public InexactTime(Partial partial) {
         this.base = new PartialTime(partial);
@@ -36,7 +36,7 @@ public class InexactTime extends Time implements CanExpressTimeAsFunction {
         this.approx = true;
     }
     
-    public InexactTime(Time base, Duration duration, Range range, CanExpressTimeAsFunction func) {
+    public InexactTime(Time base, Duration duration, Range range, ITimeDensityFunction func) {
         this.base = base;
         this.duration = duration;
         this.range = range;
@@ -56,7 +56,7 @@ public class InexactTime extends Time implements CanExpressTimeAsFunction {
     }
 
 
-    public InexactTime(InexactTime t, Time base, Duration duration, Range range, CanExpressTimeAsFunction func) {
+    public InexactTime(InexactTime t, Time base, Duration duration, Range range, ITimeDensityFunction func) {
         super(t);
         this.base = base;
         this.duration = duration;
@@ -197,31 +197,12 @@ public class InexactTime extends Time implements CanExpressTimeAsFunction {
     }
     private static final long serialVersionUID = 1;
 
-    public String GetGNUPlot(String millTimeSecondsExpr) {
-        
-        if (_func != null) {
-            return _func.GetGNUPlot(millTimeSecondsExpr);
-        }
-        
-        if (this.meanDay < 0 || this.sdDays < 0) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-        
-        String mean = Integer.toString(meanDay);
-        String st = Integer.toString(sdDays);
-        String x = "tm_yday("+millTimeSecondsExpr+")";
-        
-        String expr = "exp(  -("+x+"-"+mean+")**2/(2 * "+st+"**2) )";
-        return expr;
-    }
-
-    public void SetFunction(CanExpressTimeAsFunction func) {
-        // Can be null.
+    public void SetFunction(ITimeDensityFunction func) {
         _func = func;
     }
 
     public ITimeDensityFunction GettimeDensityFunction() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return _func;
     }
 
 }

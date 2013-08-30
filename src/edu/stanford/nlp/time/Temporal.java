@@ -164,7 +164,7 @@ public abstract class Temporal implements Cloneable, Serializable {
             map.put(SUTime.TimexAttr.mod.name(), mod);
         }
         if (this instanceof CanExpressTimeAsFunction) {
-            String expr = ((CanExpressTimeAsFunction) this).GetGNUPlot("x");
+            String expr = ((CanExpressTimeAsFunction) this).GettimeDensityFunction().GetGNUPlot("x");
             map.put("X-GNUPlot-Function", expr);
         }
         return map;

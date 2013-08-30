@@ -22,7 +22,7 @@ public class IsoDate extends PartialTime implements CanExpressTimeAsFunction {
     public int month = -1;
     /** Day of Month */
     public int day = -1;
-    private CanExpressTimeAsFunction _gnuFunc;
+    private ITimeDensityFunction _gnuFunc;
 
     public IsoDate(int y, int m, int d) {
         this(null, y, m, d);
@@ -42,7 +42,7 @@ public class IsoDate extends PartialTime implements CanExpressTimeAsFunction {
         this(y, m, d, null, null);
     }
     
-    public IsoDate(Number y, Number m, Number d, CanExpressTimeAsFunction func) {
+    public IsoDate(Number y, Number m, Number d, ITimeDensityFunction func) {
         this(y, m, d, null, null);
         _gnuFunc = func;
     }
@@ -203,37 +203,19 @@ public class IsoDate extends PartialTime implements CanExpressTimeAsFunction {
     }
     private static final long serialVersionUID = 1;
 
-    @Override
-    public String GetGNUPlot(String millTimeSecondsExpr) {
-        
-        if (this._gnuFunc != null) {
-            return _gnuFunc.GetGNUPlot(millTimeSecondsExpr);
-        }
-        
-        String expr = "1";
 
-        if (this.day > 0) {
-            expr += "*(tm_mday(" + millTimeSecondsExpr + ")==" + Integer.toString(this.day) + ")";
-        }
-        if (this.month > 0) {
-            expr += "*(tm_mon(" + millTimeSecondsExpr + ")==" + Integer.toString(this.month) + ")";
-        }
-        if (this.year > 0) {
-            expr += "*(tm_year(" + millTimeSecondsExpr + ")==" + Integer.toString(this.year) + ")";
-        }
-        return expr;
-    }
 
-    public void SetFunction(CanExpressTimeAsFunction func) {
+    public void SetFunction(ITimeDensityFunction func) {
         _gnuFunc = func;
     }
 
     public ITimeDensityFunction GettimeDensityFunction() {
 
         if (this._gnuFunc != null) {
-            return _gnuFunc.GettimeDensityFunction();
+            return _gnuFunc;
         }
         
+        // Otherwise, fall back to indicator functions.
         ITimeDensityFunction iTimeDensityFunction = new ITimeDensityFunction() {
 
             public double GetDensity(DateTime time) {
@@ -247,6 +229,27 @@ public class IsoDate extends PartialTime implements CanExpressTimeAsFunction {
                     return 0;
                 }
                 return 1;
+            }
+
+            @Override
+            public String GetGNUPlot(String millTimeSecondsExpr) {
+
+                if (_gnuFunc != null) {
+                    return _gnuFunc.GetGNUPlot(millTimeSecondsExpr);
+                }
+
+                String expr = "1";
+
+                if (day > 0) {
+                    expr += "*(tm_mday(" + millTimeSecondsExpr + ")==" + Integer.toString(day) + ")";
+                }
+                if (month > 0) {
+                    expr += "*(tm_mon(" + millTimeSecondsExpr + ")==" + Integer.toString(month) + ")";
+                }
+                if (year > 0) {
+                    expr += "*(tm_year(" + millTimeSecondsExpr + ")==" + Integer.toString(year) + ")";
+                }
+                return expr;
             }
         };
         

@@ -5,6 +5,21 @@ import edu.stanford.nlp.ling.tokensregex.*;
 import edu.stanford.nlp.ling.tokensregex.types.*;
 import edu.stanford.nlp.pipeline.ChunkAnnotationUtils;
 import edu.stanford.nlp.pipeline.CoreMapAttributeAggregator;
+import edu.stanford.nlp.time.Duration;
+import edu.stanford.nlp.time.DurationRange;
+import edu.stanford.nlp.time.InexactDuration;
+import edu.stanford.nlp.time.Options;
+import edu.stanford.nlp.time.PartialTime;
+import edu.stanford.nlp.time.PeriodicTemporalSet;
+import edu.stanford.nlp.time.Range;
+import edu.stanford.nlp.time.RefTime;
+import edu.stanford.nlp.time.SUTime;
+import edu.stanford.nlp.time.SimpleTime;
+import edu.stanford.nlp.time.Temporal;
+import edu.stanford.nlp.time.Time;
+import edu.stanford.nlp.time.TimeExpression;
+import edu.stanford.nlp.time.TimeExpressionPatterns;
+import edu.stanford.nlp.time.TimeFormatter;
 import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.util.StringUtils;
 
@@ -320,6 +335,9 @@ public class GenericTimeExpressionPatterns implements TimeExpressionPatterns {
     ));
 
     env.bind("TemporalCompose", new Expressions.PrimitiveValue<ValueFunction>(
+            
+            // Arg 0 is temporal Op.
+            // All other args are supposed to be temporals / or a matched expression
             Expressions.TYPE_FUNCTION,
             new ValueFunctions.NamedValueFunction("TemporalCompose") {
               public boolean checkArgs(List<Value> in) {
