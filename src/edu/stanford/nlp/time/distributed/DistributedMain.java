@@ -66,8 +66,8 @@ public class DistributedMain {
         props.put(WhitespaceTokenizerAnnotator.EOL_PROPERTY, "true");
 
         props.put("sutime.rules",
-                "edu/stanford/nlp/models/sutime/ben.defs.txt,"
-                + "edu/stanford/nlp/models/sutime/ben.defs.g.txt,"
+                "edu/stanford/nlp/models/sutime/distributed.defs.txt,"
+                + "edu/stanford/nlp/models/sutime/distributed.defs.g.txt,"
                 + "edu/stanford/nlp/models/sutime/defs.sutime.txt,"
                 + "edu/stanford/nlp/models/sutime/english.sutime.txt,"
                 + "edu/stanford/nlp/models/sutime/english.holidays.sutime.txt");

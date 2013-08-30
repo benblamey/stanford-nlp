@@ -1,0 +1,6 @@
+// Test = { type: "CLASS", value: "edu.stanford.nlp.time.ben.TestTime" }
+AnnualUniformDistribution = { type: "CLASS", value: "edu.stanford.nlp.time.distributed.AnnualUniformDistribution" }
+AnnualNormalDistribution = { type: "CLASS", value: "edu.stanford.nlp.time.distributed.AnnualNormalDistribution" }
+IntersectTimeExpression = { type: "CLASS", value: "edu.stanford.nlp.time.distributed.IntersectTimeExpression" }
+SumTimeExpression = { type: "CLASS", value: "edu.stanford.nlp.time.distributed.SumTimeExpression" }
+PdfTime  = { type: "CLASS", value: "edu.stanford.nlp.time.distributed.PdfTime" }
