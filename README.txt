@@ -39,6 +39,34 @@ LICENSE
 //    USA
 //
 
+##################################################################################
+Unofficial Branch by Ben Blamey, Cardiff Metropolitan University - Autumn 2013.
+
+Proof-of-Concept support for representing temporal expressions as a probability density function.
+
+See: http://benblamey.name
+
+Online demo: http://www.socialworld.co.uk:8080/SUTimeDemo/Index
+Paper download: http://benblamey.name/pubs/ai_2013/blamey13parsing.pdf
+
+@INCOLLECTION{blamey13parsing,
+  author = {Blamey, Ben and Crick, Tom and Oatley, Giles},
+  editor = {Bramer, Max and Petridis, Miltos},
+  title = {'The First Day of Summer': Parsing Temporal Expressions with Distributed
+	Semantics},
+  booktitle = {Research and Development in Intelligent Systems XXX},
+  year = {2013},
+  language = {English},
+  publisher = {Springer International Publishing},
+  isbn = {978-3-319-02620-6},
+  pages = {389-402},
+  doi = {10.1007/978-3-319-02621-3_29},
+  url = {http://dx.doi.org/10.1007/978-3-319-02621-3_29}
+}
+##################################################################################
+
+
+
 ---------------------------------
 CHANGES
 ---------------------------------
