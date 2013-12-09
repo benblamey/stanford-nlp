@@ -17,7 +17,7 @@
   $FREQ_MOD = ( /each/ | /every/ $NUM_ORD | /every/ /other|alternate|alternating/? | /alternate|alternating/ );
   $EARLY_LATE_MOD = ( /late|early|mid-?/ | /the/? /beginning|start|dawn|middle|end/ /of/ );
   $APPROX_MOD = ( /about|around|some|exactly|precisely/ );
-  $YEAR = ( /[012]\d\d\d/ | /\w+teen|twenty/ [ { numcompvalue<100 } & { numcompvalue>0 } & $INT ] );
+  $YEAR = ( /[012]\d\d\d!+?/ | /\w+teen|twenty/ [ { numcompvalue<100 } & { numcompvalue>0 } & $INT ] );
   $POSSIBLE_YEAR = ( $YEAR | $INT /a\.?d\.?|b\.?c\.?/ | $INT1000TO3000 );
   $hasTemporal = "{ temporal::EXISTS } & {{ temporal.value != NON_TEMPORAL }}";
 
@@ -281,8 +281,8 @@
   { (/weekdays?/) => WEEKDAY }
 
   # Month
-  { (/januarys?/) => JANUARY }
-  { (/februarys?/) => FEBRUARY }
+  { (/january+s?/) => JANUARY }
+  { (/february+s?/) => FEBRUARY }
   { (/marchs?/) => MARCH }
   { (/aprils?/) => APRIL }
   { (/mays?/) => MAY }
@@ -323,8 +323,14 @@
   { ruleType: "time", pattern: /'T'HH(:?mm(:?ss([.,](S{1,3}))?)?)?(Z)?/ }
   # Tokenizer "sometimes adds extra slash
   { ruleType: "time", pattern: /yyyy\\?\/MM\\?\/dd/ }
-  { ruleType: "time", pattern: /MM?\\?\/dd?\\?\/(yyyy|yy)/ }
-  { ruleType: "time", pattern: /MM?-dd?-(yyyy|yy)/ }
+  
+  # Follow UK convention.
+  #{ ruleType: "time", pattern: /MM?\\?\/dd?\\?\/(yyyy|yy)/ }
+  { ruleType: "time", pattern: /dd?\\?\/MM?\\?\/(yyyy|yy)/ }
+
+  #{ ruleType: "time", pattern: /MM?-dd?-(yyyy|yy)/ }
+  { ruleType: "time", pattern: /dd?-MM?-(yyyy|yy)/ }
+
   { ruleType: "time", pattern: /HH?:mm(:ss)?/ }
   { ruleType: "time", pattern: /yyyy-MM/ }
 
@@ -333,7 +339,13 @@
   { ruleType: "time", pattern: /HH?''hmm/ }
 
   # two digit year
-  { ruleType: "time", pattern: /''yy/ }
+
+  #############
+  # Apostrophe (') can mean two things:-
+  # \' means put an escaped apostrophe in the regex.
+  # 'xxx' means put the literal string xxx in the regex (and don't parse as a date/time field).
+  #############
+  { ruleType: "time", pattern: /\'yy/ }
 
   # Birthdays
   { ( [ { tag:NNP } ]+ [ { tag:POS } ] /birthday/ ) => SimpleTime($0) }
@@ -526,14 +538,15 @@
 	            $month[0].temporal,
 	            GetTag($1[0], "PTS.quant"), GetTag($1[0], "PTS.multiple") ) }
 
+# IsoDate argument order is y,m,d.
   { name: "composite-date-expression-1",
 	priority: 1,
 	pattern: ( ( /the/? (?$day $NUM_ORD & $INT1TO31) /of/? | (?$day /\d\d?/ & $INT1TO31) )?
 	           (?$month [ { temporal::MONTH } ])
-			   (?$day $NUM_ORD|/\d\d?/ & $INT1TO31)?
-			   (?: /of|,/? (?$year $POSSIBLE_YEAR))? ),
-	result: IsoDate( GetTag($year[0].numtokens[0], "YEAR"),
-	                 $month[0].temporal.value.month, $day[0].numcompvalue) }
+			   (?$year /\d\d/ )),
+	result: IsoDate( $year[0].numcompvalue,
+                 $month[0].temporal.value.month, $day[0].numcompvalue) }
+
 
   { name: "composite-date-expression-1b",
 	pattern: ( /the/? /ides/ /of|in/? (?$month [ { temporal::MONTH } ]) (?: /of|,/? (?$year $POSSIBLE_YEAR))? ),
