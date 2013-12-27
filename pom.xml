@@ -13,6 +13,17 @@
             <url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
         </license>
     </licenses>
+  
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+            </plugin>
+        </plugins>
+    </reporting>
+  
     <scm>
         <url>http://nlp.stanford.edu/software/stanford-corenlp-2013-04-04.tgz</url>
         <connection>http://nlp.stanford.edu/software/stanford-corenlp-2013-04-04.tgz</connection>
@@ -89,6 +100,11 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
@@ -102,7 +118,7 @@
         <!-- NOTE: The release profile will be removed from future versions of the super POM -->
         <profile>
             <!-- A smaller JAR file that includes only the models needed to run the modified version of SUTime for distributional tempex definitions. -->
-            <id>distributed-jar</id>
+            <id>sutime-demo-jar</id>
             <build>
                 <!-- <sourceDirectory>src</sourceDirectory> -->
                 <plugins>
@@ -122,6 +138,10 @@
                             <encoding>${project.build.sourceEncoding}</encoding>
                         </configuration>
                     </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                    </plugin>
                 </plugins>
                 <resources>
                     <resource>
@@ -129,11 +149,79 @@
                         <includes>
                             <include>edu/stanford/nlp/models/pos-tagger/english-left3words/english-left3words-distsim.tagger</include>
                             <include>edu/stanford/nlp/models/sutime/**</include>
+                            <include>edu/stanford/nlp/models/ner/**</include>
                         </includes>
                     </resource>
                 </resources>
             </build>
         </profile>
+        
+        
+        <profile>
+            <!-- Fast developer build - skip the JAR file to be quick. -->
+            <id>class-files-only</id>
+            <build>
+                <!-- <sourceDirectory>src</sourceDirectory> -->
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>2.3</version>
+                        <configuration>
+                            <encoding>${project.build.sourceEncoding}</encoding>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>2.3.2</version>
+                        <configuration>
+                            <encoding>${project.build.sourceEncoding}</encoding>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                    </plugin>
+                    
+                    <!-- Turn off JAR building by binding the default-jar execution to a nonexistent phase... -->
+                    <plugin>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-jar</id>
+                                <phase>never</phase>
+                                <configuration>
+                                    <finalName>unwanted</finalName>
+                                    <classifier>unwanted</classifier>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+      
+                    <!-- ...this causes errors with the "install" phase, so turn that off too. -->
+                    <plugin>
+                        <artifactId>maven-install-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-install</id>
+                                <phase>never</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+                <resources>
+                    <resource>
+                        <directory>src</directory>
+                        <includes>
+                            <!-- Include all the model files. -->
+                            <include>edu/stanford/nlp/**</include>
+                        </includes>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+        
     </profiles>
 	  
 </project>
