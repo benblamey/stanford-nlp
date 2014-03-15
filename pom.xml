@@ -149,7 +149,6 @@
                         <includes>
                             <include>edu/stanford/nlp/models/pos-tagger/english-left3words/english-left3words-distsim.tagger</include>
                             <include>edu/stanford/nlp/models/sutime/**</include>
-                            <include>edu/stanford/nlp/models/ner/**</include>
                         </includes>
                     </resource>
                 </resources>
@@ -159,7 +158,7 @@
         
         <profile>
             <!-- Fast developer build - skip the JAR file to be quick. -->
-            <id>class-files-only</id>
+            <id>no-jar-all-models</id>
             <build>
                 <!-- <sourceDirectory>src</sourceDirectory> -->
                 <plugins>

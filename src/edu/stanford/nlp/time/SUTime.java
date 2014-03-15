@@ -571,7 +571,7 @@ public class SUTime {
         NEXT {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
                 
-                System.out.println("Op NEXT applied to: " + arg1 + " " + arg2);
+                //System.out.println("Op NEXT applied to: " + arg1 + " " + arg2);
                 
                 if (arg2 == null) {
                     return arg1;
@@ -593,7 +593,7 @@ public class SUTime {
         NEXT_IMMEDIATE {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
                 
-                System.out.println("Op NEXT_IMMEDIATE applied to: " + arg1 + " " + arg2);
+                //System.out.println("Op NEXT_IMMEDIATE applied to: " + arg1 + " " + arg2);
                 
                 if (arg1 == null) {
                     return new RelativeTime(NEXT_IMMEDIATE, arg2);
@@ -629,7 +629,7 @@ public class SUTime {
         THIS {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
                 
-                System.out.println("Op THIS applied to: " + arg1 + " " + arg2);
+                //System.out.println("Op THIS applied to: " + arg1 + " " + arg2);
                 
                 if (arg1 == null) {
                     return new RelativeTime(THIS, arg2, flags);
@@ -650,7 +650,7 @@ public class SUTime {
         PREV {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
                 
-                System.out.println("Op PREV applied to: " + arg1 + " " + arg2);
+                //System.out.println("Op PREV applied to: " + arg1 + " " + arg2);
                 
                 if (arg2 == null) {
                     return arg1;
@@ -672,7 +672,7 @@ public class SUTime {
         PREV_IMMEDIATE {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
                 
-                System.out.println("Op PREV_IMMEDIATE applied to: " + arg1 + " " + arg2);
+                //System.out.println("Op PREV_IMMEDIATE applied to: " + arg1 + " " + arg2);
                 
                 if (arg1 == null) {
                     return new RelativeTime(PREV_IMMEDIATE, arg2);
@@ -706,7 +706,7 @@ public class SUTime {
         UNION {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
                 
-                System.out.println("Op UNION applied to: " + arg1 + " " + arg2);
+                //System.out.println("Op UNION applied to: " + arg1 + " " + arg2);
                 
                 if (arg1 == null) {
                     return arg2;
@@ -721,7 +721,7 @@ public class SUTime {
         INTERSECT {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
                 
-                System.out.println("Op INTERSECT applied to: " + arg1 + " " + arg2);
+                //System.out.println("Op INTERSECT applied to: " + arg1 + " " + arg2);
                 
                 if (arg1 == null) {
                     return arg2;
@@ -756,7 +756,7 @@ public class SUTime {
                     }
                 }
                
-                System.out.println("Returning object with hash:" + System.identityHashCode(t));
+                //System.out.println("Returning object with hash:" + System.identityHashCode(t));
                 return t;
             }
 
@@ -765,7 +765,7 @@ public class SUTime {
         IN {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
                 
-                System.out.println("Op IN applied to: " + arg1 + " " + arg2);
+                //System.out.println("Op IN applied to: " + arg1 + " " + arg2);
                 
                 if (arg1 == null) {
                     return arg2;
@@ -781,7 +781,7 @@ public class SUTime {
         OFFSET {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
                 
-                System.out.println("Op OFFSET applied to: " + arg1 + " " + arg2);
+                //System.out.println("Op OFFSET applied to: " + arg1 + " " + arg2);
                 
                 if (arg1 == null) {
                     return new RelativeTime(OFFSET, arg2);
@@ -797,7 +797,7 @@ public class SUTime {
         },
         MINUS {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
-                System.out.println("Op MINUS applied to: " + arg1 + " " + arg2);
+                //System.out.println("Op MINUS applied to: " + arg1 + " " + arg2);
                 
                 if (arg1 == null) {
                     return arg2;
@@ -819,7 +819,7 @@ public class SUTime {
         PLUS {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
                 
-                System.out.println("Op PLUS applied to: " + arg1 + " " + arg2);
+                //System.out.println("Op PLUS applied to: " + arg1 + " " + arg2);
                 if (arg1 == null) {
                     return arg2;
                 }
@@ -840,7 +840,7 @@ public class SUTime {
         MIN {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
                 
-                System.out.println("Op MIN applied to: " + arg1 + " " + arg2);
+                //System.out.println("Op MIN applied to: " + arg1 + " " + arg2);
                 
                 if (arg1 == null) {
                     return arg2;
@@ -860,7 +860,7 @@ public class SUTime {
         MAX {
             public Temporal apply(Temporal arg1, Temporal arg2, int flags) {
                 
-                System.out.println("Op MAX applied to: " + arg1 + " " + arg2);
+                //System.out.println("Op MAX applied to: " + arg1 + " " + arg2);
                 
                 if (arg1 == null) {
                     return arg2;
@@ -880,7 +880,7 @@ public class SUTime {
         MULTIPLY {
             
             public Temporal apply(Duration d, int scale) {
-                System.out.println("Op MULTIPLY invoked with: " + d + " " + scale);
+                //System.out.println("Op MULTIPLY invoked with: " + d + " " + scale);
                 if (d == null) {
                     return null;
                 }
@@ -966,7 +966,7 @@ public class SUTime {
         ADD_MODIFIER {
             public Temporal apply(Temporal t, String modifier) {
                 
-                System.out.println("Op ADD_MODIFIER invoked with: " + t + " " + modifier);
+                //System.out.println("Op ADD_MODIFIER invoked with: " + t + " " + modifier);
                 
                 return t.addMod(modifier);
             }
