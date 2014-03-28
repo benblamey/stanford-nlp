@@ -42,6 +42,7 @@ public abstract class Temporal implements Cloneable, Serializable {
     public String timeLabel;
 
     public Temporal() {
+        
     }
 
     public Temporal(Temporal t) {

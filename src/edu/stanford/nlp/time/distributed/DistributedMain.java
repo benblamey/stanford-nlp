@@ -92,9 +92,9 @@ public class DistributedMain {
 
         pipeline.addAnnotator(new WordsToSentencesAnnotator(true, end_of_sentence_regex)); // true to debug
 
-        pipeline.addAnnotator(new POSTaggerAnnotator(
-                props.getProperty("pos.model"),
-                false));
+//        pipeline.addAnnotator(new POSTaggerAnnotator(
+//                props.getProperty("pos.model"),
+//                false));
 //    pipeline.addAnnotator(new NumberAnnotator(false));
 //    pipeline.addAnnotator(new QuantifiableEntityNormalizingAnnotator(false, false));
         String timeAnnotator = props.getProperty("timeAnnotator", "sutime");

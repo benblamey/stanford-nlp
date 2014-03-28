@@ -1,6 +1,11 @@
 package edu.stanford.nlp.time;
 
 
+import edu.stanford.nlp.time.distributed.CanExpressTimeAsFunction;
+import edu.stanford.nlp.time.distributed.ITimeDensityFunction;
+import edu.stanford.nlp.time.distributed.IntersectTimeExpression;
+import java.util.ArrayList;
+import java.util.List;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.DurationFieldType;
 import org.joda.time.Instant;
@@ -26,7 +31,26 @@ public class CompositePartialTime extends PartialTime {
         this.poy = poy;
         this.dow = dow;
         this.tod = tod;
+        
+        List<CanExpressTimeAsFunction> pdfs =new ArrayList<CanExpressTimeAsFunction>();
+        
+        if (t.GettimeDensityFunction() != null) {
+            pdfs.add(t);
+        }
+        addToPdfs(poy, pdfs);
+        addToPdfs(dow, pdfs);
+        addToPdfs(tod, pdfs);
+        
+        this.SetFunction(new IntersectTimeExpression(pdfs));
     }
+    
+    private void addToPdfs(Time poy, List<CanExpressTimeAsFunction> pdfs) {
+        if (poy != null && poy instanceof CanExpressTimeAsFunction) {
+            ITimeDensityFunction func = ((CanExpressTimeAsFunction)poy).GettimeDensityFunction();
+            if (func != null) pdfs.add((CanExpressTimeAsFunction)poy);
+        }
+    }
+    
 
     public CompositePartialTime(PartialTime t, Partial p, Time poy, Time dow, Time tod) {
         this(t, poy, dow, tod);
@@ -278,5 +302,7 @@ public class CompositePartialTime extends PartialTime {
         return (hasTime() || tod != null) ? SUTime.TimexType.TIME : SUTime.TimexType.DATE;
     }
     private static final long serialVersionUID = 1;
+
+
 
 }
