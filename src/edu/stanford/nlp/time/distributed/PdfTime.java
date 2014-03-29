@@ -40,7 +40,10 @@ public class PdfTime extends Time implements CanExpressTimeAsFunction {
         
         if (t instanceof CanExpressTimeAsFunction) {
             CanExpressTimeAsFunction tFunc = (CanExpressTimeAsFunction)t;
-            this._plot = new IntersectTimeExpression(this._plot, tFunc);
+            this._plot = new IntersectTimeExpression(
+                    new TimeDensityFunctionContainer(_plot, this.toString()),
+                    tFunc
+                    );
         } else {
             throw new UnsupportedOperationException("Other temporal doesn't support CanExpressTimeAsFunction.");
         }
