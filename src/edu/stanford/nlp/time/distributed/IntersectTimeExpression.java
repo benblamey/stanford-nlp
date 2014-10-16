@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import org.joda.time.DateTime;
 
-public class IntersectTimeExpression implements ITimeDensityFunction {
+public class IntersectTimeExpression extends TimeDensityFunction {
 
-    ArrayList<ITimeDensityFunction> _models = new ArrayList<ITimeDensityFunction>();
+    ArrayList<TimeDensityFunction> _models = new ArrayList<TimeDensityFunction>();
     ArrayList<CanExpressTimeAsFunction> _debuggingModels = new ArrayList<CanExpressTimeAsFunction>();
     
     public IntersectTimeExpression(CanExpressTimeAsFunction left, CanExpressTimeAsFunction right) {
@@ -32,10 +32,10 @@ public class IntersectTimeExpression implements ITimeDensityFunction {
         }
     }
 
-    public double GetDensity(DateTime time) {
+    public double getDensity(DateTime time) {
         double density = 1;
-        for (ITimeDensityFunction f : _models) {
-            density *= f.GetDensity(time);
+        for (TimeDensityFunction f : _models) {
+            density *= f.getDensity(time);
             if (density == 0) {
                 break;
             }
@@ -43,12 +43,12 @@ public class IntersectTimeExpression implements ITimeDensityFunction {
         return density;
     }
 
-    public String GetGNUPlot(String millTimeSecondsExpr) {
+    public String getGNUPlot(String millTimeSecondsExpr) {
 
         String expr = "";
 
         for (int i = 0; i < _models.size(); i++) {
-            String expr_i = "(" + _models.get(i).GetGNUPlot(millTimeSecondsExpr) + ")";
+            String expr_i = "(" + _models.get(i).getGNUPlot(millTimeSecondsExpr) + ")";
 
             if (i < _models.size() - 1) {
                 expr_i += "  *  ";

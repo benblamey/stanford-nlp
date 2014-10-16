@@ -4,7 +4,7 @@ import edu.stanford.nlp.util.DateUtil;
 import edu.stanford.nlp.util.ModuloMathUtils;
 import org.joda.time.DateTime;
 
-public class AnnualNormalDistribution implements ITimeDensityFunction {
+public class AnnualNormalDistribution extends TimeDensityFunction {
 
     Number _mixture;
     Number _meanSecondsMillTime;
@@ -20,7 +20,7 @@ public class AnnualNormalDistribution implements ITimeDensityFunction {
     }
 
     @Override
-    public double GetDensity(DateTime time) {
+    public double getDensity(DateTime time) {
 
         DateTime mean = DateUtil.FromMilleniumTime(_meanSecondsMillTime.intValue());
         DateTime meanInSameYear = mean.year().setCopy(time.getYear());
@@ -36,7 +36,7 @@ public class AnnualNormalDistribution implements ITimeDensityFunction {
     }
 
     @Override
-    public String GetGNUPlot(String millTimeSecondsExpr) {
+    public String getGNUPlot(String millTimeSecondsExpr) {
         String equation = _mixture + "/("
                 + "sqrt(" + _standardDeviationSeconds + "*2*pi))"
                 + "*exp ( - dsyear( x , "

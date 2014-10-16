@@ -1,7 +1,7 @@
 package edu.stanford.nlp.time;
 
 import edu.stanford.nlp.time.distributed.CanExpressTimeAsFunction;
-import edu.stanford.nlp.time.distributed.ITimeDensityFunction;
+import edu.stanford.nlp.time.distributed.TimeDensityFunction;
 import java.util.ArrayList;
 import java.util.List;
 import org.joda.time.DateTime;
@@ -24,7 +24,7 @@ public class PartialTime extends Time implements CanExpressTimeAsFunction {
     // For representing partial absolute time
     DateTimeZone dateTimeZone; // Datetime zone associated with this time
     // Datetime zone associated with this time
-    private ITimeDensityFunction _gnuFunc;
+    private TimeDensityFunction _gnuFunc;
 
     // private static DateTimeFormatter isoDateFormatter =
     // ISODateTimeFormat.basicDate();
@@ -575,17 +575,17 @@ public class PartialTime extends Time implements CanExpressTimeAsFunction {
     }
     private static final long serialVersionUID = 1;
 
-    public void SetFunction(ITimeDensityFunction func) {
+    public void SetFunction(TimeDensityFunction func) {
         _gnuFunc = func;
     }
 
-    public ITimeDensityFunction GettimeDensityFunction() {
+    public TimeDensityFunction GettimeDensityFunction() {
         if (_gnuFunc != null) {
             return _gnuFunc;
         }
         
-        ITimeDensityFunction iTimeDensityFunction = new ITimeDensityFunction() {
-            public double GetDensity(DateTime time) {
+        TimeDensityFunction iTimeDensityFunction = new TimeDensityFunction() {
+            public double getDensity(DateTime time) {
                 for (DateTimeField f : base.getFields()) {
                     int get = base.get(f.getType());
                     DateTimeFieldType type = f.getType();
@@ -607,7 +607,7 @@ public class PartialTime extends Time implements CanExpressTimeAsFunction {
             }
 
             @Override
-            public String GetGNUPlot(String millTimeSecondsExpr) {
+            public String getGNUPlot(String millTimeSecondsExpr) {
 
                 String func = "1";
 

@@ -2,7 +2,7 @@ package edu.stanford.nlp.time;
 
 
 import edu.stanford.nlp.time.distributed.CanExpressTimeAsFunction;
-import edu.stanford.nlp.time.distributed.ITimeDensityFunction;
+import edu.stanford.nlp.time.distributed.TimeDensityFunction;
 import edu.stanford.nlp.time.distributed.IntersectTimeExpression;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +46,7 @@ public class CompositePartialTime extends PartialTime {
     
     private void addToPdfs(Time poy, List<CanExpressTimeAsFunction> pdfs) {
         if (poy != null && poy instanceof CanExpressTimeAsFunction) {
-            ITimeDensityFunction func = ((CanExpressTimeAsFunction)poy).GettimeDensityFunction();
+            TimeDensityFunction func = ((CanExpressTimeAsFunction)poy).GettimeDensityFunction();
             if (func != null) pdfs.add((CanExpressTimeAsFunction)poy);
         }
     }

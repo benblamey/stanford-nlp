@@ -2,7 +2,7 @@ package edu.stanford.nlp.time;
 
 
 import edu.stanford.nlp.time.distributed.CanExpressTimeAsFunction;
-import edu.stanford.nlp.time.distributed.ITimeDensityFunction;
+import edu.stanford.nlp.time.distributed.TimeDensityFunction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeFieldType;
 
@@ -22,7 +22,7 @@ public class IsoDate extends PartialTime implements CanExpressTimeAsFunction {
     public int month = -1;
     /** Day of Month */
     public int day = -1;
-    private ITimeDensityFunction _gnuFunc;
+    private TimeDensityFunction _gnuFunc;
 
     public IsoDate(int y, int m, int d) {
         this(null, y, m, d);
@@ -42,7 +42,7 @@ public class IsoDate extends PartialTime implements CanExpressTimeAsFunction {
         this(y, m, d, null, null);
     }
     
-    public IsoDate(Number y, Number m, Number d, ITimeDensityFunction func) {
+    public IsoDate(Number y, Number m, Number d, TimeDensityFunction func) {
         this(y, m, d, null, null);
         _gnuFunc = func;
     }
@@ -205,20 +205,20 @@ public class IsoDate extends PartialTime implements CanExpressTimeAsFunction {
 
 
 
-    public void SetFunction(ITimeDensityFunction func) {
+    public void SetFunction(TimeDensityFunction func) {
         _gnuFunc = func;
     }
 
-    public ITimeDensityFunction GettimeDensityFunction() {
+    public TimeDensityFunction GettimeDensityFunction() {
 
         if (this._gnuFunc != null) {
             return _gnuFunc;
         }
         
         // Otherwise, fall back to indicator functions.
-        ITimeDensityFunction iTimeDensityFunction = new ITimeDensityFunction() {
+        TimeDensityFunction iTimeDensityFunction = new TimeDensityFunction() {
 
-            public double GetDensity(DateTime time) {
+            public double getDensity(DateTime time) {
                 if ((day > 0) && (time.getDayOfMonth() != day)) {
                     return 0;
                 }
@@ -232,10 +232,10 @@ public class IsoDate extends PartialTime implements CanExpressTimeAsFunction {
             }
 
             @Override
-            public String GetGNUPlot(String millTimeSecondsExpr) {
+            public String getGNUPlot(String millTimeSecondsExpr) {
 
                 if (_gnuFunc != null) {
-                    return _gnuFunc.GetGNUPlot(millTimeSecondsExpr);
+                    return _gnuFunc.getGNUPlot(millTimeSecondsExpr);
                 }
 
                 String expr = "1";

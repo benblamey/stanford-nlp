@@ -2,7 +2,7 @@ package edu.stanford.nlp.time;
 
 
 import edu.stanford.nlp.time.distributed.CanExpressTimeAsFunction;
-import edu.stanford.nlp.time.distributed.ITimeDensityFunction;
+import edu.stanford.nlp.time.distributed.TimeDensityFunction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Instant;
@@ -21,7 +21,7 @@ public class InexactTime extends Time implements CanExpressTimeAsFunction {
 
     int meanDay = -1;
     int sdDays = -1;
-    private ITimeDensityFunction _func;
+    private TimeDensityFunction _func;
     
     public InexactTime(Partial partial) {
         this.base = new PartialTime(partial);
@@ -36,7 +36,7 @@ public class InexactTime extends Time implements CanExpressTimeAsFunction {
         this.approx = true;
     }
     
-    public InexactTime(Time base, Duration duration, Range range, ITimeDensityFunction func) {
+    public InexactTime(Time base, Duration duration, Range range, TimeDensityFunction func) {
         this.base = base;
         this.duration = duration;
         this.range = range;
@@ -56,7 +56,7 @@ public class InexactTime extends Time implements CanExpressTimeAsFunction {
     }
 
 
-    public InexactTime(InexactTime t, Time base, Duration duration, Range range, ITimeDensityFunction func) {
+    public InexactTime(InexactTime t, Time base, Duration duration, Range range, TimeDensityFunction func) {
         super(t);
         this.base = base;
         this.duration = duration;
@@ -197,11 +197,11 @@ public class InexactTime extends Time implements CanExpressTimeAsFunction {
     }
     private static final long serialVersionUID = 1;
 
-    public void SetFunction(ITimeDensityFunction func) {
+    public void SetFunction(TimeDensityFunction func) {
         _func = func;
     }
 
-    public ITimeDensityFunction GettimeDensityFunction() {
+    public TimeDensityFunction GettimeDensityFunction() {
         return _func;
     }
 

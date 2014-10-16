@@ -3,20 +3,20 @@ package edu.stanford.nlp.time.distributed;
 
 class TimeDensityFunctionContainer implements CanExpressTimeAsFunction {
     
-    private final ITimeDensityFunction _func;
+    private final TimeDensityFunction _func;
 
-    public TimeDensityFunctionContainer(ITimeDensityFunction func, String message) {
+    public TimeDensityFunctionContainer(TimeDensityFunction func, String message) {
         if (func == null) {
             throw new RuntimeException("func cannot be null.");
         }
         _func = func;
     }
     
-    public ITimeDensityFunction GettimeDensityFunction() {
+    public TimeDensityFunction GettimeDensityFunction() {
         return _func;
     }
 
-    public void SetFunction(ITimeDensityFunction func) {
+    public void SetFunction(TimeDensityFunction func) {
         throw new UnsupportedOperationException("Readonly- Not supported.");
     }
 

@@ -12,10 +12,10 @@ import java.util.Map;
  */
 public class PdfTime extends Time implements CanExpressTimeAsFunction {
 
-    private ITimeDensityFunction _plot;
+    private TimeDensityFunction _plot;
     private String label = "PdfTime";
     
-    public PdfTime(ITimeDensityFunction plot) {
+    public PdfTime(TimeDensityFunction plot) {
         _plot = plot;
     }
     
@@ -58,11 +58,11 @@ public class PdfTime extends Time implements CanExpressTimeAsFunction {
         return timexAttributes;
     }
 
-    public void SetFunction(ITimeDensityFunction func) {
+    public void SetFunction(TimeDensityFunction func) {
         throw new UnsupportedOperationException("Not supported for this function.");
     }
 
-    public ITimeDensityFunction GettimeDensityFunction() {
+    public TimeDensityFunction GettimeDensityFunction() {
         return _plot;
     }
 }

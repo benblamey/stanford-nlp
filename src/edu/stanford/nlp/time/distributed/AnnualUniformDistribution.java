@@ -2,7 +2,7 @@ package edu.stanford.nlp.time.distributed;
 
 import org.joda.time.DateTime;
 
-public class AnnualUniformDistribution implements ITimeDensityFunction {
+public class AnnualUniformDistribution extends TimeDensityFunction {
 
     private Number _mixtureCoefficient;
 
@@ -10,11 +10,13 @@ public class AnnualUniformDistribution implements ITimeDensityFunction {
         _mixtureCoefficient = mixtureCoefficient;
     }
 
-    public double GetDensity(DateTime time) {
+    @Override
+    public double getDensity(DateTime time) {
         return _mixtureCoefficient.doubleValue() / (60 * 60 * 24 * 365);
     }
 
-    public String GetGNUPlot(String millTimeSecondsExpr) {
+    @Override
+    public String getGNUPlot(String millTimeSecondsExpr) {
         return _mixtureCoefficient.toString() + "/(60*60*24*366)";
     }
 }

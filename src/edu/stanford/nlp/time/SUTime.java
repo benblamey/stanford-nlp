@@ -4,7 +4,7 @@ import edu.stanford.nlp.ling.tokensregex.types.Expressions;
 import edu.stanford.nlp.time.distributed.AnnualNormalDistribution;
 import edu.stanford.nlp.time.distributed.AnnualUniformDistribution;
 import edu.stanford.nlp.time.distributed.CanExpressTimeAsFunction;
-import edu.stanford.nlp.time.distributed.ITimeDensityFunction;
+import edu.stanford.nlp.time.distributed.TimeDensityFunction;
 import edu.stanford.nlp.time.distributed.IntersectTimeExpression;
 import edu.stanford.nlp.util.*;
 
@@ -303,7 +303,7 @@ public class SUTime {
     public static final Time FALL_EQUINOX = createTemporal(StandardTemporalType.DAY_OF_YEAR, "FA", new InexactTime(new Range(new IsoDate(-1, 9, 22), new IsoDate(-1, 9, 23))));
 
   
-    public static final ITimeDensityFunction WINTER_DIST = new SumTimeExpression(
+    public static final TimeDensityFunction WINTER_DIST = new SumTimeExpression(
 	new AnnualNormalDistribution(0.332196332118026,380435856.707,1204042.11586607),
 	new AnnualNormalDistribution(0.312814001825274,408869365.796,973033.867210455),
 	new AnnualNormalDistribution(0.193038509037954,382603192.964,983967.159767546),
@@ -317,7 +317,7 @@ public class SUTime {
 	new AnnualNormalDistribution(0.0055020970116363,389454260.529,1333408.97911959)
     );
 
-    public static final ITimeDensityFunction SPRING_DIST = new SumTimeExpression(
+    public static final TimeDensityFunction SPRING_DIST = new SumTimeExpression(
             new AnnualNormalDistribution(0.445594445141809,386379881.414,991185.498830499),
             new AnnualNormalDistribution(0.19025635242184,389245545.056,1054577.27732744),
             new AnnualNormalDistribution(0.175453906063836,384232020.181,1061101.81507672),
@@ -331,7 +331,7 @@ public class SUTime {
             new AnnualNormalDistribution(0.0100431454788087,408554018.951,1467723.98999854)
     );
 
-    public static final ITimeDensityFunction SUMMER_DIST = new SumTimeExpression(
+    public static final TimeDensityFunction SUMMER_DIST = new SumTimeExpression(
             new AnnualNormalDistribution(0.293868748378889,396083115.724,1116628.25886232),
             new AnnualNormalDistribution(0.222956545854207,393264030.565,1078080.63909611),
             new AnnualNormalDistribution(0.214902872150514,398865458.907,1003586.73967376),
@@ -345,7 +345,7 @@ public class SUTime {
             new AnnualNormalDistribution(0.0150251734484461,405421429.033,1279296.83868521)
     );
 
-    public static final ITimeDensityFunction AUTUMN_DIST = new SumTimeExpression(
+    public static final TimeDensityFunction AUTUMN_DIST = new SumTimeExpression(
             new AnnualNormalDistribution(0.438693232224144,405055864.72,1029853.22456299),
             new AnnualNormalDistribution(0.398134343882415,403049902.031,955829.313707557),
             new AnnualNormalDistribution(0.0499697872804527,407492850.286,1008379.93605087),
@@ -738,7 +738,7 @@ public class SUTime {
                 // UnsupportedOperationException("INTERSECT not implemented for arg1=" +
                 // arg1.getClass() + ", arg2="+arg2.getClass());
                 
-                ITimeDensityFunction timeFunction = null;
+                TimeDensityFunction timeFunction = null;
                 if ((arg1 instanceof CanExpressTimeAsFunction) && (arg2 instanceof CanExpressTimeAsFunction)) {
                     timeFunction = new IntersectTimeExpression((CanExpressTimeAsFunction) arg1, (CanExpressTimeAsFunction) arg2);
                 } else if ((arg1 instanceof CanExpressTimeAsFunction) || (arg2 instanceof CanExpressTimeAsFunction)) {
