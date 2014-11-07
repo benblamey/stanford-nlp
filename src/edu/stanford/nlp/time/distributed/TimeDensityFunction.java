@@ -48,7 +48,7 @@ public abstract class TimeDensityFunction {
     }
     
     
-    public double getSimilarity(TimeDensityFunction x, TimeDensityFunction y) {
+    public static double getSimilarity(TimeDensityFunction x, TimeDensityFunction y) {
         // Similarity is simply the scalar product of the density vectors associated with the two time densities.
         // Effectively just multiplying the densities without re-normalizing.
         

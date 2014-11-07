@@ -1,6 +1,7 @@
 package edu.stanford.nlp.time.distributed;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import org.joda.time.DateTime;
 
 public class SumTimeExpression extends TimeDensityFunction {
@@ -9,6 +10,11 @@ public class SumTimeExpression extends TimeDensityFunction {
         _models.add(left);
         _models.add(right);
     }
+    
+    public SumTimeExpression(Collection<TimeDensityFunction> densities) {
+        _models.addAll(densities);
+    }
+    
     ArrayList<TimeDensityFunction> _models = new ArrayList<TimeDensityFunction>();
 
     public SumTimeExpression(Object... models) {
