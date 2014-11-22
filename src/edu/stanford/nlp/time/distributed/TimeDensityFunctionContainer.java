@@ -12,11 +12,11 @@ class TimeDensityFunctionContainer implements CanExpressTimeAsFunction {
         _func = func;
     }
     
-    public TimeDensityFunction GettimeDensityFunction() {
+    public TimeDensityFunction getTimeDensityFunction() {
         return _func;
     }
 
-    public void SetFunction(TimeDensityFunction func) {
+    public void setTimeDensityFunction(TimeDensityFunction func) {
         throw new UnsupportedOperationException("Readonly- Not supported.");
     }
 

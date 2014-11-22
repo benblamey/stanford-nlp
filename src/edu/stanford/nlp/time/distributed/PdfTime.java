@@ -58,11 +58,11 @@ public class PdfTime extends Time implements CanExpressTimeAsFunction {
         return timexAttributes;
     }
 
-    public void SetFunction(TimeDensityFunction func) {
+    public void setTimeDensityFunction(TimeDensityFunction func) {
         throw new UnsupportedOperationException("Not supported for this function.");
     }
 
-    public TimeDensityFunction GettimeDensityFunction() {
+    public TimeDensityFunction getTimeDensityFunction() {
         return _plot;
     }
 }

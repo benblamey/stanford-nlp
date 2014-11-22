@@ -8,8 +8,8 @@ public abstract class TimeDensityFunction {
     /**
      * For the time being, the maximum range is hard-coded.
      */
-    private static final DateTime s_startDay = new DateTime(2005, 1,1,0,0);
-    private static final DateTime s_endDay = new DateTime(2014,12, 31,0,0);
+    private static final DateTime s_startDay = new DateTime(2005,1,1,0,0);
+    private static final DateTime s_endDay = new DateTime(2014,12,31,0,0);
     private static final int s_numberOfDays = Days.daysBetween(s_startDay, s_endDay).getDays() + 1;
     
     public abstract double getDensity(DateTime time);

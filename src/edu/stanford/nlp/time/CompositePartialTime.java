@@ -34,19 +34,27 @@ public class CompositePartialTime extends PartialTime {
         
         List<CanExpressTimeAsFunction> pdfs =new ArrayList<CanExpressTimeAsFunction>();
         
-        if (t.GettimeDensityFunction() != null) {
+        if (t.getTimeDensityFunction() != null) {
             pdfs.add(t);
         }
         addToPdfs(poy, pdfs);
         addToPdfs(dow, pdfs);
         addToPdfs(tod, pdfs);
         
-        this.SetFunction(new IntersectTimeExpression(pdfs));
+        this.setTimeDensityFunction(new IntersectTimeExpression(pdfs));
     }
+
+    @Override
+    public TimeDensityFunction getTimeDensityFunction() {
+        return super.getTimeDensityFunction(); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    
+    
     
     private void addToPdfs(Time poy, List<CanExpressTimeAsFunction> pdfs) {
         if (poy != null && poy instanceof CanExpressTimeAsFunction) {
-            TimeDensityFunction func = ((CanExpressTimeAsFunction)poy).GettimeDensityFunction();
+            TimeDensityFunction func = ((CanExpressTimeAsFunction)poy).getTimeDensityFunction();
             if (func != null) pdfs.add((CanExpressTimeAsFunction)poy);
         }
     }

@@ -197,11 +197,11 @@ public class InexactTime extends Time implements CanExpressTimeAsFunction {
     }
     private static final long serialVersionUID = 1;
 
-    public void SetFunction(TimeDensityFunction func) {
+    public void setTimeDensityFunction(TimeDensityFunction func) {
         _func = func;
     }
 
-    public TimeDensityFunction GettimeDensityFunction() {
+    public TimeDensityFunction getTimeDensityFunction() {
         return _func;
     }
 

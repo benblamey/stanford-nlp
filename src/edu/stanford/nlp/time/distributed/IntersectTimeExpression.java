@@ -11,16 +11,16 @@ public class IntersectTimeExpression extends TimeDensityFunction {
     
     public IntersectTimeExpression(CanExpressTimeAsFunction left, CanExpressTimeAsFunction right) {
         _debuggingModels.add(left);
-        _models.add(left.GettimeDensityFunction());
+        _models.add(left.getTimeDensityFunction());
         _debuggingModels.add(right);
-        _models.add(right.GettimeDensityFunction());
+        _models.add(right.getTimeDensityFunction());
     }
 
     public IntersectTimeExpression(CanExpressTimeAsFunction... models) {
         for (Object obj : models) {
             CanExpressTimeAsFunction obj2 = (CanExpressTimeAsFunction) obj;
             _debuggingModels.add(obj2);
-            _models.add(obj2.GettimeDensityFunction());
+            _models.add(obj2.getTimeDensityFunction());
         }
     }
     
@@ -28,7 +28,7 @@ public class IntersectTimeExpression extends TimeDensityFunction {
         for (Object obj : models) {
             CanExpressTimeAsFunction obj2 = (CanExpressTimeAsFunction) obj;
             _debuggingModels.add(obj2);
-            _models.add(obj2.GettimeDensityFunction());
+            _models.add(obj2.getTimeDensityFunction());
         }
     }
 

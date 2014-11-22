@@ -575,11 +575,11 @@ public class PartialTime extends Time implements CanExpressTimeAsFunction {
     }
     private static final long serialVersionUID = 1;
 
-    public void SetFunction(TimeDensityFunction func) {
+    public void setTimeDensityFunction(TimeDensityFunction func) {
         _gnuFunc = func;
     }
 
-    public TimeDensityFunction GettimeDensityFunction() {
+    public TimeDensityFunction getTimeDensityFunction() {
         if (_gnuFunc != null) {
             return _gnuFunc;
         }

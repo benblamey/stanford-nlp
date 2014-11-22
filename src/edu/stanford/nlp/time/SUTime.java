@@ -752,7 +752,7 @@ public class SUTime {
                         System.out.println("t: " +t);
                         throw new UnsupportedOperationException();
                     } else {
-                        ((CanExpressTimeAsFunction)t).SetFunction(timeFunction);
+                        ((CanExpressTimeAsFunction)t).setTimeDensityFunction(timeFunction);
                     }
                 }
                

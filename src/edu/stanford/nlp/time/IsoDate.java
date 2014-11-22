@@ -205,11 +205,11 @@ public class IsoDate extends PartialTime implements CanExpressTimeAsFunction {
 
 
 
-    public void SetFunction(TimeDensityFunction func) {
+    public void setTimeDensityFunction(TimeDensityFunction func) {
         _gnuFunc = func;
     }
 
-    public TimeDensityFunction GettimeDensityFunction() {
+    public TimeDensityFunction getTimeDensityFunction() {
 
         if (this._gnuFunc != null) {
             return _gnuFunc;
