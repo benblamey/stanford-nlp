@@ -4,10 +4,10 @@ import edu.stanford.nlp.ling.CoreAnnotation;
 
 public class TimePDF {
 
-    public static class TimePDFAnnotation implements CoreAnnotation<CanExpressTimeAsFunction> {
+    public static class TimePDFAnnotation implements CoreAnnotation<TimeDensityFunction> {
 
-        public Class<CanExpressTimeAsFunction> getType() {
-            return CanExpressTimeAsFunction.class;
+        public Class<TimeDensityFunction> getType() {
+            return TimeDensityFunction.class;
         }
     }
 }

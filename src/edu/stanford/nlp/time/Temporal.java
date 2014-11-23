@@ -1,7 +1,5 @@
 package edu.stanford.nlp.time;
 
-
-import edu.stanford.nlp.time.distributed.CanExpressTimeAsFunction;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;

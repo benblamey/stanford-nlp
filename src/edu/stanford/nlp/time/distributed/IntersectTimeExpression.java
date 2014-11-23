@@ -1,5 +1,6 @@
 package edu.stanford.nlp.time.distributed;
 
+import edu.stanford.nlp.time.Time;
 import java.util.ArrayList;
 import java.util.List;
 import org.joda.time.DateTime;
@@ -7,30 +8,44 @@ import org.joda.time.DateTime;
 public class IntersectTimeExpression extends TimeDensityFunction {
 
     ArrayList<TimeDensityFunction> _models = new ArrayList<TimeDensityFunction>();
-    ArrayList<CanExpressTimeAsFunction> _debuggingModels = new ArrayList<CanExpressTimeAsFunction>();
+    ArrayList<Time> _debuggingModels = new ArrayList<Time>();
     
-    public IntersectTimeExpression(CanExpressTimeAsFunction left, CanExpressTimeAsFunction right) {
+    public IntersectTimeExpression(Time left, Time right) {
         _debuggingModels.add(left);
-        _models.add(left.getTimeDensityFunction());
+        _models.add(left.getTimeExpression());
         _debuggingModels.add(right);
-        _models.add(right.getTimeDensityFunction());
+        _models.add(right.getTimeExpression());
     }
 
-    public IntersectTimeExpression(CanExpressTimeAsFunction... models) {
+    public IntersectTimeExpression(Time... models) {
         for (Object obj : models) {
-            CanExpressTimeAsFunction obj2 = (CanExpressTimeAsFunction) obj;
+            Time obj2 = (Time) obj;
             _debuggingModels.add(obj2);
-            _models.add(obj2.getTimeDensityFunction());
+            _models.add(obj2.getTimeExpression());
         }
     }
     
-    public IntersectTimeExpression(List<CanExpressTimeAsFunction> models) {
-        for (Object obj : models) {
-            CanExpressTimeAsFunction obj2 = (CanExpressTimeAsFunction) obj;
-            _debuggingModels.add(obj2);
-            _models.add(obj2.getTimeDensityFunction());
+    public IntersectTimeExpression(TimeDensityFunction... models) {
+        for (TimeDensityFunction obj : models) {
+            _models.add(obj);
         }
     }
+    
+    public IntersectTimeExpression(List<TimeDensityFunction> models) {
+        for (TimeDensityFunction obj : models) {
+            _models.add(obj);
+        }
+    }
+
+
+    
+//    public IntersectTimeExpression(List<CanExpressTimeAsFunction> models) {
+//        for (Object obj : models) {
+//            CanExpressTimeAsFunction obj2 = (CanExpressTimeAsFunction) obj;
+//            _debuggingModels.add(obj2);
+//            _models.add(obj2.getTimeDensityFunction());
+//        }
+//    }
 
     public double getDensity(DateTime time) {
         double density = 1;

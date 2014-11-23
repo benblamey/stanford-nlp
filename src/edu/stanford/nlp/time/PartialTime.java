@@ -1,6 +1,5 @@
 package edu.stanford.nlp.time;
 
-import edu.stanford.nlp.time.distributed.CanExpressTimeAsFunction;
 import edu.stanford.nlp.time.distributed.TimeDensityFunction;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,14 +16,13 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 
 // Partial time with Joda Time fields
-public class PartialTime extends Time implements CanExpressTimeAsFunction {
+public class PartialTime extends Time {
     // There is typically some uncertainty/imprecision in the time
 
     Partial base; // For representing partial absolute time
     // For representing partial absolute time
     DateTimeZone dateTimeZone; // Datetime zone associated with this time
     // Datetime zone associated with this time
-    private TimeDensityFunction _gnuFunc;
 
     // private static DateTimeFormatter isoDateFormatter =
     // ISODateTimeFormat.basicDate();
@@ -575,14 +573,7 @@ public class PartialTime extends Time implements CanExpressTimeAsFunction {
     }
     private static final long serialVersionUID = 1;
 
-    public void setTimeDensityFunction(TimeDensityFunction func) {
-        _gnuFunc = func;
-    }
-
     public TimeDensityFunction getTimeDensityFunction() {
-        if (_gnuFunc != null) {
-            return _gnuFunc;
-        }
         
         TimeDensityFunction iTimeDensityFunction = new TimeDensityFunction() {
             public double getDensity(DateTime time) {

@@ -1,6 +1,7 @@
 package edu.stanford.nlp.time;
 
 
+import edu.stanford.nlp.time.distributed.TimeDensityFunction;
 import edu.stanford.nlp.util.FuzzyInterval;
 import edu.stanford.nlp.util.HasInterval;
 import edu.stanford.nlp.util.Interval;
@@ -33,6 +34,43 @@ public abstract class Time extends Temporal implements FuzzyInterval.FuzzyCompar
     public Time getTime() {
         return this;
     }
+    
+    /**
+     * Get the previously set TimeDensityFunction, or, if none exists, generates
+     * and returns a default.
+     */
+    public TimeDensityFunction getTimeExpression() {
+        if (!_funcHasBeenSet) {
+            _func = createDefaultTimeExpression();
+            _funcHasBeenSet = true;
+        }
+        return _func;
+    }
+    
+    /**
+     * Allows the time expression to be overridden, for example when interesting
+     * time expressions.
+     * uses this one from now one, disables any subsequent re-generation of the density
+     * function. Used to modify temporals when they are assigned.
+     */
+    public void setTimeExpression(TimeDensityFunction func) {
+        _funcHasBeenSet = true;
+        _func = func;
+    }
+    
+    private TimeDensityFunction _func = null;
+    private boolean _funcHasBeenSet;
+    
+    /**
+     * Derived classes should override this method to provide a 
+     * TimeDensityFunction representing the temporal information they contain.
+     * @return 
+     */
+    public TimeDensityFunction createDefaultTimeExpression() {
+        System.err.println("Lacking time implementation for ...");
+        return null;
+    }
+    
 
     // Default is a instant in time with same begin and end point
     // Every time should return a non-null range

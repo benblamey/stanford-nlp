@@ -3,24 +3,12 @@ package edu.stanford.nlp.time;
 import edu.stanford.nlp.ling.tokensregex.types.Expressions;
 import edu.stanford.nlp.time.distributed.AnnualNormalDistribution;
 import edu.stanford.nlp.time.distributed.AnnualUniformDistribution;
-import edu.stanford.nlp.time.distributed.CanExpressTimeAsFunction;
-import edu.stanford.nlp.time.distributed.TimeDensityFunction;
 import edu.stanford.nlp.time.distributed.IntersectTimeExpression;
-import edu.stanford.nlp.util.*;
-
-import edu.stanford.nlp.util.Interval;
-import org.joda.time.*;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.DateTimeFormatterBuilder;
-
-import java.io.Serializable;
-import java.util.*;
+import edu.stanford.nlp.time.distributed.SumTimeExpression;
+import edu.stanford.nlp.time.distributed.TimeDensityFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.naming.OperationNotSupportedException;
-
-import edu.stanford.nlp.time.distributed.SumTimeExpression;
+import org.joda.time.*;
 
 /**
  * SUTime is a collection of data structures to represent various temporal
@@ -739,22 +727,18 @@ public class SUTime {
                 // arg1.getClass() + ", arg2="+arg2.getClass());
                 
                 TimeDensityFunction timeFunction = null;
-                if ((arg1 instanceof CanExpressTimeAsFunction) && (arg2 instanceof CanExpressTimeAsFunction)) {
-                    timeFunction = new IntersectTimeExpression((CanExpressTimeAsFunction) arg1, (CanExpressTimeAsFunction) arg2);
-                } else if ((arg1 instanceof CanExpressTimeAsFunction) || (arg2 instanceof CanExpressTimeAsFunction)) {
-                    System.err.println("arg1 is "+arg1.getClass().toString());
-                    System.err.println("arg2 is "+arg2.getClass().toString());
-                    throw new UnsupportedOperationException();
-                }
-            
-                if (timeFunction != null) {
-                    if (!(t instanceof CanExpressTimeAsFunction) ) {
-                        System.out.println("t: " +t);
-                        throw new UnsupportedOperationException();
+                if ((arg1 instanceof Time) && (arg2 instanceof Time)) {
+                    TimeDensityFunction te1 = ((Time)arg1).getTimeExpression();
+                    TimeDensityFunction te2 = ((Time)arg2).getTimeExpression();
+                    
+                    if (te1 == null || te2 == null) {
+                        System.err.println("Trying to interest times without time expressions!! need implementation!");
                     } else {
-                        ((CanExpressTimeAsFunction)t).setTimeDensityFunction(timeFunction);
+                        Time tTime = ((Time)t);
+                        tTime.setTimeExpression(new IntersectTimeExpression(te1, te2));
                     }
                 }
+            
                
                 //System.out.println("Returning object with hash:" + System.identityHashCode(t));
                 return t;

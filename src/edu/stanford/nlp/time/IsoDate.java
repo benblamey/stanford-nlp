@@ -1,7 +1,5 @@
 package edu.stanford.nlp.time;
 
-
-import edu.stanford.nlp.time.distributed.CanExpressTimeAsFunction;
 import edu.stanford.nlp.time.distributed.TimeDensityFunction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeFieldType;
@@ -10,7 +8,7 @@ import org.joda.time.DateTimeFieldType;
  * This is mostly a helper class but it is also the most standard type of date that people are
  * used to working with.
  */
-public class IsoDate extends PartialTime implements CanExpressTimeAsFunction {
+public class IsoDate extends PartialTime {
     // TODO: We are also using this class for partial dates
     //       with just decade or century, but it is difficult
     //       to get that information out without using the underlying joda classes
@@ -203,17 +201,7 @@ public class IsoDate extends PartialTime implements CanExpressTimeAsFunction {
     }
     private static final long serialVersionUID = 1;
 
-
-
-    public void setTimeDensityFunction(TimeDensityFunction func) {
-        _gnuFunc = func;
-    }
-
-    public TimeDensityFunction getTimeDensityFunction() {
-
-        if (this._gnuFunc != null) {
-            return _gnuFunc;
-        }
+    public TimeDensityFunction createDefaultTimeExpression() {
         
         // Otherwise, fall back to indicator functions.
         TimeDensityFunction iTimeDensityFunction = new TimeDensityFunction() {

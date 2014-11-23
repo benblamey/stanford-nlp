@@ -1,7 +1,5 @@
 package edu.stanford.nlp.time;
 
-
-import edu.stanford.nlp.time.distributed.CanExpressTimeAsFunction;
 import edu.stanford.nlp.time.distributed.TimeDensityFunction;
 import edu.stanford.nlp.time.distributed.IntersectTimeExpression;
 import java.util.ArrayList;
@@ -32,37 +30,20 @@ public class CompositePartialTime extends PartialTime {
         this.dow = dow;
         this.tod = tod;
         
-        List<CanExpressTimeAsFunction> pdfs =new ArrayList<CanExpressTimeAsFunction>();
-        
-        if (t.getTimeDensityFunction() != null) {
-            pdfs.add(t);
-        }
-        addToPdfs(poy, pdfs);
-        addToPdfs(dow, pdfs);
-        addToPdfs(tod, pdfs);
-        
-        this.setTimeDensityFunction(new IntersectTimeExpression(pdfs));
+        List<TimeDensityFunction> tdfs = new ArrayList<>();
+        tdfs.add(t.getTimeDensityFunction());
+        if (poy != null) tdfs.add(poy.getTimeExpression());
+        if (dow != null) tdfs.add(dow.getTimeExpression());
+        if (tod != null) tdfs.add(tod.getTimeExpression());
+        this.setTimeExpression(
+            new IntersectTimeExpression(tdfs)       
+        );
     }
-
-    @Override
-    public TimeDensityFunction getTimeDensityFunction() {
-        return super.getTimeDensityFunction(); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    
-    
-    
-    private void addToPdfs(Time poy, List<CanExpressTimeAsFunction> pdfs) {
-        if (poy != null && poy instanceof CanExpressTimeAsFunction) {
-            TimeDensityFunction func = ((CanExpressTimeAsFunction)poy).getTimeDensityFunction();
-            if (func != null) pdfs.add((CanExpressTimeAsFunction)poy);
-        }
-    }
-    
 
     public CompositePartialTime(PartialTime t, Partial p, Time poy, Time dow, Time tod) {
         this(t, poy, dow, tod);
         this.base = p;
+        System.err.println("CompositePartialTime -- not implemented.");
     }
 
     public Instant getJodaTimeInstant() {
