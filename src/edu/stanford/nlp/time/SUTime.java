@@ -6,6 +6,11 @@ import edu.stanford.nlp.time.distributed.AnnualUniformDistribution;
 import edu.stanford.nlp.time.distributed.IntersectTimeExpression;
 import edu.stanford.nlp.time.distributed.SumTimeExpression;
 import edu.stanford.nlp.time.distributed.TimeDensityFunction;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.joda.time.*;
@@ -732,9 +737,24 @@ public class SUTime {
                     TimeDensityFunction te2 = ((Time)arg2).getTimeExpression();
                     
                     if (te1 == null || te2 == null) {
+                        try {
+                            BufferedWriter _writer = new BufferedWriter(new FileWriter("C:/work/docs/Dropbox/PHD_DATA/TimeTypes.txt", true));
+                            _writer.append(arg1.getClass().getName() + "\n");
+                            _writer.append(arg2.getClass().getName() + "\n");
+                            _writer.close();
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
                         System.err.println("Trying to interest times without time expressions!! need implementation!");
                     } else {
                         Time tTime = ((Time)t);
+                        if (tTime == null) {
+                            System.err.println("intersect operation failed!");
+                            System.err.println("arg1: " + arg1.toISOString());
+                            System.err.println("arg2: " + arg2.toISOString());
+                            
+                            throw new RuntimeException();
+                        }
                         tTime.setTimeExpression(new IntersectTimeExpression(te1, te2));
                     }
                 }
@@ -983,6 +1003,9 @@ public class SUTime {
         public Temporal apply(Object... args) {
             throw new UnsupportedOperationException("apply(Object...) not implemented for TemporalOp " + this);
         }
+        
+        
+        
     }
     public static final int ERA_BC = 0;
     public static final int ERA_AD = 1;

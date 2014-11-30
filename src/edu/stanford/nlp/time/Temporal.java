@@ -1,5 +1,6 @@
 package edu.stanford.nlp.time;
 
+import edu.stanford.nlp.time.distributed.TimeDensityFunction;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -49,7 +50,7 @@ public abstract class Temporal implements Cloneable, Serializable {
         //      this.standardTimeType = t.standardTimeType;
         //      this.timeLabel = t.timeLabel;
     }
-
+    
     public abstract boolean isGrounded();
 
     // Returns time representation for Temporal (if available)

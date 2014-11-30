@@ -1,6 +1,8 @@
 package edu.stanford.nlp.time;
 
 
+import edu.stanford.nlp.time.distributed.TimeDensityFunction;
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeFieldType;
 
 // Helper time class
@@ -65,6 +67,27 @@ public class IsoTime extends PartialTime {
     public boolean hasTime() {
         return true;
     }
+
+    @Override
+    public TimeDensityFunction createDefaultTimeExpression() {
+        
+                // Otherwise, fall back to indicator functions.
+        TimeDensityFunction iTimeDensityFunction = new TimeDensityFunction() {
+
+            public double getDensity(DateTime time) {
+                return 1;
+            }
+
+            @Override
+            public String getGNUPlot(String millTimeSecondsExpr) {
+                return "1";
+            }
+        };
+        
+        return iTimeDensityFunction;
+    }
+    
+    
 
     private void initBase() {
         if (hour >= 0) {

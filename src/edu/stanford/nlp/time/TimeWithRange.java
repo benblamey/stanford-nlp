@@ -1,6 +1,8 @@
 package edu.stanford.nlp.time;
 
 
+import edu.stanford.nlp.time.distributed.TimeDensityFunction;
+import edu.stanford.nlp.time.distributed.TimeRangeDensity;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Partial;
 
@@ -16,6 +18,15 @@ public class TimeWithRange extends Time {
 
     public TimeWithRange(Range range) {
         this.range = range;
+    }
+    
+                /**
+     * Derived classes should override this method to provide a 
+     * TimeDensityFunction representing the temporal information they contain.
+     * @return 
+     */
+    public TimeDensityFunction createDefaultTimeExpression() {
+        return new TimeRangeDensity(range);
     }
 
     public TimeWithRange setTimeZone(DateTimeZone tz) {

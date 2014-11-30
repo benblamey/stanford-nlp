@@ -1,6 +1,7 @@
 package edu.stanford.nlp.time;
 
 
+import edu.stanford.nlp.time.distributed.TimeDensityFunction;
 import java.util.Map;
 
 // Relative Time (something not quite resolved)
@@ -49,6 +50,19 @@ public class RelativeTime extends Time {
     }
 
     public RelativeTime() {
+    }
+    
+                /**
+     * Derived classes should override this method to provide a 
+     * TimeDensityFunction representing the temporal information they contain.
+     * @return 
+     */
+    public TimeDensityFunction createDefaultTimeExpression() {
+        
+     //   _t.
+        
+        System.err.println("not implementing RelativeTime");
+        return null;
     }
 
     public boolean isGrounded() {

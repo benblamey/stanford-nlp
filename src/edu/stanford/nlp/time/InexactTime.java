@@ -2,6 +2,7 @@ package edu.stanford.nlp.time;
 
 
 import edu.stanford.nlp.time.distributed.TimeDensityFunction;
+import edu.stanford.nlp.time.distributed.TimeRangeDensity;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Instant;
@@ -20,6 +21,14 @@ public class InexactTime extends Time {
 
     int meanDay = -1;
     int sdDays = -1;
+
+    @Override
+    public TimeDensityFunction createDefaultTimeExpression() {
+        return new TimeRangeDensity(range);
+    }
+    
+    
+            
     
     public InexactTime(Partial partial) {
         this.base = new PartialTime(partial);

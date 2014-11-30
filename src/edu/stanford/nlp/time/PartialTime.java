@@ -1,6 +1,7 @@
 package edu.stanford.nlp.time;
 
 import edu.stanford.nlp.time.distributed.TimeDensityFunction;
+import edu.stanford.nlp.time.distributed.TimeDensityImpl;
 import java.util.ArrayList;
 import java.util.List;
 import org.joda.time.DateTime;
@@ -50,6 +51,8 @@ public class PartialTime extends Time {
     // ISODateTimeFormat.tTimeNoMillis();
     public PartialTime(Time t, Partial p) {
         super(t);
+        
+        
         this.base = p;
     }
 
@@ -73,6 +76,14 @@ public class PartialTime extends Time {
 
     public PartialTime() {
     }
+
+    
+    @Override
+    public TimeDensityFunction createDefaultTimeExpression() {
+        return new TimeDensityImpl(base);
+    }
+    
+    
 
     public PartialTime setTimeZone(DateTimeZone tz) {
         PartialTime tzPt = new PartialTime(this, base);

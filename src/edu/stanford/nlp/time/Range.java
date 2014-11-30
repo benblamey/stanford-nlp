@@ -11,8 +11,8 @@ import org.joda.time.DateTimeZone;
  * A time interval
  */
 public class Range extends Temporal implements HasInterval<Time> {
-    Time begin = SUTime.TIME_UNKNOWN;
-    Time end = SUTime.TIME_UNKNOWN;
+    public Time begin = SUTime.TIME_UNKNOWN;
+    public Time end = SUTime.TIME_UNKNOWN;
     Duration duration = SUTime.DURATION_UNKNOWN;
 
     public Range(Time begin, Time end) {

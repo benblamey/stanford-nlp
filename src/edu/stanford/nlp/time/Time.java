@@ -16,14 +16,32 @@ import org.joda.time.Period;
  *   each time point can be represented as an interval.
  */
 public abstract class Time extends Temporal implements FuzzyInterval.FuzzyComparable<Time>, HasInterval<Time> {
+    
+    private Time _t;
 
     public Time() {
     }
 
+    
     public Time(Time t) {
         super(t); /*this.hasTime = t.hasTime; */ /*this.hasTime = t.hasTime; */
+        _t = t;
     }
 
+    
+            /**
+     * Derived classes should override this method to provide a 
+     * TimeDensityFunction representing the temporal information they contain.
+     * @return 
+     */
+    public TimeDensityFunction createDefaultTimeExpression() {
+        
+     //   _t.
+        
+        System.err.println("Lacking time implementation for ...");
+        return null;
+    }
+    
     // Represents a point in time - there is typically some
     // uncertainty/imprecision in the exact time
     public boolean isGrounded() {
@@ -61,15 +79,7 @@ public abstract class Time extends Temporal implements FuzzyInterval.FuzzyCompar
     private TimeDensityFunction _func = null;
     private boolean _funcHasBeenSet;
     
-    /**
-     * Derived classes should override this method to provide a 
-     * TimeDensityFunction representing the temporal information they contain.
-     * @return 
-     */
-    public TimeDensityFunction createDefaultTimeExpression() {
-        System.err.println("Lacking time implementation for ...");
-        return null;
-    }
+
     
 
     // Default is a instant in time with same begin and end point
