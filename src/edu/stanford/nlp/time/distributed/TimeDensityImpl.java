@@ -4,6 +4,7 @@ import edu.stanford.nlp.time.distributed.TimeDensityFunction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.Partial;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class TimeDensityImpl extends TimeDensityFunction {
     private final Partial _base;
@@ -34,7 +35,30 @@ public class TimeDensityImpl extends TimeDensityFunction {
 
     @Override
     public String getGNUPlot(String millTimeSecondsExpr) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String expression = "";
+        
+        int[] values = _base.getValues();
+        int i = 0;
+        
+        for (DateTimeFieldType fieldType : _base.getFieldTypes()) {
+            int tempexFieldValue = values[i];
+            
+            if (fieldType == DateTimeFieldType.yearOfCentury()) {
+                expression = "(tm_year("+millTimeSecondsExpr+") % 1000 == " + tempexFieldValue+ ")";
+            } else if (fieldType == DateTimeFieldType.year()) {
+                expression = "(tm_year("+millTimeSecondsExpr+") == " + tempexFieldValue+ ")";
+            } else if (fieldType == DateTimeFieldType.dayOfMonth()) {   
+                expression = "(tm_mday("+millTimeSecondsExpr+") == " + tempexFieldValue+ ")";
+            } else if (fieldType == DateTimeFieldType.dayOfWeek()) {
+                expression = "(tm_wday("+millTimeSecondsExpr+") == " + tempexFieldValue+ ")";
+            } else if (fieldType == DateTimeFieldType.monthOfYear()) {
+                expression = "(tm_mon("+millTimeSecondsExpr+") == " + tempexFieldValue+ ")";
+            } else {
+                throw new NotImplementedException();
+            }
+        }
+        
+        return expression;
     }
 
 }

@@ -24,7 +24,7 @@
   { (/halloween/ ) => IsoDate(NIL, 10, 31, HALLOWEEN_DIST) }
   { (/x-?mas|christma+s/ /eve/ ) => IsoDate(NIL, 12, 24) }
   { (/x-?mas|christma+s/ /day/ ) => IsoDate(NIL, 12, 25) }
-  { (/x-?mas|christma+s+!*/ ) => IsoDate(NIL, 12, 25, CHRISTMAS_DIST) }
+  { (/x-?mas|xmas|christma+s+!*/ ) => IsoDate(NIL, 12, 25, CHRISTMAS_DIST) }
 
 
 

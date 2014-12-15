@@ -1,6 +1,7 @@
 package edu.stanford.nlp.time.distributed;
 
 import edu.stanford.nlp.ling.CoreAnnotation;
+import edu.stanford.nlp.time.Temporal;
 
 public class TimePDF {
 
@@ -10,4 +11,12 @@ public class TimePDF {
             return TimeDensityFunction.class;
         }
     }
+    
+    public static class TemporalAnnotation implements CoreAnnotation<Temporal> {
+
+        public Class<Temporal> getType() {
+            return Temporal.class;
+        }
+    }
+
 }

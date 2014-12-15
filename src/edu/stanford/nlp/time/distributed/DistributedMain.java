@@ -18,6 +18,8 @@ import edu.stanford.nlp.pipeline.WhitespaceTokenizerAnnotator;
 import edu.stanford.nlp.pipeline.WordsToSentencesAnnotator;
 import edu.stanford.nlp.time.GUTimeAnnotator;
 import edu.stanford.nlp.time.HeidelTimeAnnotator;
+import edu.stanford.nlp.time.Temporal;
+import edu.stanford.nlp.time.Time;
 import edu.stanford.nlp.time.TimeAnnotations;
 import edu.stanford.nlp.time.TimeAnnotator;
 import edu.stanford.nlp.time.Timex;
@@ -34,23 +36,34 @@ public class DistributedMain {
     public static void main(String[] args) throws Exception {
         String date = null;//"2013-04-23";// props.getProperty("date");
 
-
-
         // Tries searching the classpath by default (see: IOUtils)
         //       String uri = "edu/stanford/nlp/models/pos-tagger/english-left3words/english-left3words-distsim.tagger";
-
         //SUTime.class.getResource().toString();
-
         //    System.err.println(uri);
-
 //        Properties props = StringUtils.argsToProperties(new String[0]);
 //        props.put("pos.model", uri);
         AnnotationPipeline pipeline;
         pipeline = getPipeline();
 
-        String in = "Summer '12 "
+        String in = "Summer 2012 "
+                + "\n\n Summer"
+                + "\n\n Winter"
+                + "\n\n Easter"
+                + "\n\n Autumn"
+                + "\n\n Summer 2015"
+                + "\n\n Thursday 25th July"
+                + "\n\n  the beginning of next week"
+                + "\n\n 21st April"
+                + "\n\n the end of June"
+                + "\n\n Xmas"
+                + "\n\n '13"
+                + "\n\n Dec '11"
+                + "\n\n June"
+                + "\n\n Sun 21st April"
+                + "\n\n Thursday 14th March 2013"
                 + "\n\n foo '12"
-                + "\n\n fffSummer '11.";
+                + "\n\n fff Summer '11."
+                ;
 
         processText(pipeline, in, date);
     }
@@ -61,12 +74,11 @@ public class DistributedMain {
 
         AnnotationPipeline pipeline = new AnnotationPipeline();
 
-
         // include EOL when tokenizing
         props.put(WhitespaceTokenizerAnnotator.EOL_PROPERTY, "true");
 
         props.put("sutime.rules",
-                  "edu/stanford/nlp/models/sutime/distributed.defs.txt,"
+                "edu/stanford/nlp/models/sutime/distributed.defs.txt,"
                 + "edu/stanford/nlp/models/sutime/distributed.defs.g.txt,"
                 + "edu/stanford/nlp/models/sutime/defs.sutime.txt,"
                 + "edu/stanford/nlp/models/sutime/english.sutime.txt,"
@@ -78,7 +90,6 @@ public class DistributedMain {
         //WhitespaceTokenizerFactory
 
         //pipeline.addAnnotator(new PTBTokenizerAnnotator(PTBTokenizerAnnotator.DEFAULT_OPTIONS + ",tokenizeNLs"));
-
         final boolean endOfLineIsEndOfSentence = true;
 
         String end_of_sentence_regex;
@@ -130,8 +141,8 @@ public class DistributedMain {
         int previousEnd = 0;
         List<Element> timexElems = new ArrayList<Element>();
         List<ValuedInterval<CoreMap, Integer>> processed = new ArrayList<ValuedInterval<CoreMap, Integer>>();
-        CollectionValuedMap<Integer, ValuedInterval<CoreMap, Integer>> unprocessed =
-                new CollectionValuedMap<Integer, ValuedInterval<CoreMap, Integer>>(CollectionFactory.<ValuedInterval<CoreMap, Integer>>arrayListFactory());
+        CollectionValuedMap<Integer, ValuedInterval<CoreMap, Integer>> unprocessed
+                = new CollectionValuedMap<Integer, ValuedInterval<CoreMap, Integer>>(CollectionFactory.<ValuedInterval<CoreMap, Integer>>arrayListFactory());
         for (ValuedInterval<CoreMap, Integer> v : timexList) {
             CoreMap timexAnn = v.getValue();
             int begin = timexAnn.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class) - charBeginOffset;
@@ -173,24 +184,21 @@ public class DistributedMain {
 
         text = text.replace("{", "(").replace("}", ")");
 
-
-        System.err.println("Processing line: " + text);
+       // System.err.println("Processing line: " + text);
 
         Annotation annotation = textToAnnotation(pipeline, text, date);
 
         String text2 = annotation.get(CoreAnnotations.TextAnnotation.class);
 
-        List<CoreLabel> tokens = annotation.get(CoreAnnotations.TokensAnnotation.class);
-        for (CoreLabel token : tokens) {
-            Integer start = token.get(CoreAnnotations.TokenBeginAnnotation.class);
-            Integer end = token.get(CoreAnnotations.TokenEndAnnotation.class);
-            if (start != null || end != null) {
-                String tokenText = text.substring(start, end);
-                System.err.println("Token: " + token);
-            }
-        }
-
-
+//        List<CoreLabel> tokens = annotation.get(CoreAnnotations.TokensAnnotation.class);
+//        for (CoreLabel token : tokens) {
+//            Integer start = token.get(CoreAnnotations.TokenBeginAnnotation.class);
+//            Integer end = token.get(CoreAnnotations.TokenEndAnnotation.class);
+//            if (start != null || end != null) {
+//                String tokenText = text.substring(start, end);
+//                System.err.println("Token: " + token);
+//            }
+//        }
 
         List<CoreMap> timexes = annotation.get(
                 TimeAnnotations.TimexAnnotations.class);
@@ -207,14 +215,9 @@ public class DistributedMain {
         }
         Collections.sort(timexList, HasInterval.CONTAINS_FIRST_ENDPOINTS_COMPARATOR);
 
-
         {
             annotation.get(CoreAnnotations.SentencesAnnotation.class);
-
         }
-
-        // Reverse so that we start with the annotations at the end of the text.
-        // Collections.reverse(timexList);
 
         StringBuilder newText = new StringBuilder();
 
@@ -226,18 +229,49 @@ public class DistributedMain {
 
             if (characterOffsetStart > 0 && (characterOffsetStart > lastIndex)) {
                 newText.append(text.substring(lastIndex, characterOffsetStart));
+                System.out.println(text.substring(lastIndex, characterOffsetStart));
             }
 
-            Timex get = vi.getValue().get(edu.stanford.nlp.time.TimeAnnotations.TimexAnnotation.class);
+            String token = vi.getValue().get(edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation.class);
 
-            String gnuPlot = get.getGNUPlot();
+            newText.append(text.substring(characterOffsetStart, characterOffsetEnd));
+            System.out.println(text.substring(characterOffsetStart, characterOffsetEnd));
+            
+            Timex timex = vi.getValue().get(edu.stanford.nlp.time.TimeAnnotations.TimexAnnotation.class);
+            System.out.println(timex.toString());
+            
+            TimeDensityFunction get1 = vi.getValue().get(edu.stanford.nlp.time.distributed.TimePDF.TimePDFAnnotation.class);
+            System.out.print("\tDensity:");
+            if (get1 == null) {
+                System.out.println("null");
+            } else {
+                System.out.println(
+                        get1.toString()
+                );
+            }
+            
+            if (false) {
+                Temporal temporal = vi.getValue().get(edu.stanford.nlp.time.distributed.TimePDF.TemporalAnnotation.class);
+                if (temporal == null) {
+                    System.out.println("null");
+                } else {
+                    TimeDensityFunction timeExpression = null;
+                    if (temporal instanceof Time) {
+                        timeExpression = ((Time)temporal).getTimeExpression();
+                    }
 
-            System.out.println("plot: " + gnuPlot);
+                    System.out.println(timeExpression != null ? timeExpression.getGNUPlot("x") : "null");    
+                }
+            }
+            
+
+            String gnuPlot = timex.getGNUPlot();
+
+            System.out.println("\tplot: " + gnuPlot);
             "".toString();
 
-
             newText.append("{"); //  
-            newText.append(text.substring(characterOffsetStart, characterOffsetEnd));
+            
             newText.append("}"); // 
 
             lastIndex = characterOffsetEnd;
@@ -247,21 +281,17 @@ public class DistributedMain {
 
         //ProcessTextResult ptr = new ProcessTextResult();
         // ptr.textAreaText = StringEscapeUtils.escapeHtml4(text);
-
         String highlightedHtml = newText.toString(); // Has { } to indicate annotations at correct indices.
 
         // Now parsed, so can escape HTML entities in the incoming string.
         //highlightedHtml = StringEscapeUtils.escapeHtml4(highlightedHtml);
-
-
-        highlightedHtml = highlightedHtml.replace("{", "<span class=\"highlight\">");
-        highlightedHtml = highlightedHtml.replace("}", "</span>");
+        //highlightedHtml = highlightedHtml.replace("{", "<span class=\"highlight\">");
+        //highlightedHtml = highlightedHtml.replace("}", "</span>");
         highlightedHtml = highlightedHtml;
 
         // Insert tags for carriage returns in HTML.
-        highlightedHtml = highlightedHtml.replaceAll("\\r?\\n", "<br/>\n");
-
-        System.out.println(highlightedHtml); //    	List<Node> timexNodes = createTimexNodes(
+        //highlightedHtml = highlightedHtml.replaceAll("\\r?\\n", "<br/>\n");
+        //System.out.println(highlightedHtml); //    	List<Node> timexNodes = createTimexNodes(
 
     }
 
