@@ -18,6 +18,8 @@ import edu.stanford.nlp.pipeline.WhitespaceTokenizerAnnotator;
 import edu.stanford.nlp.pipeline.WordsToSentencesAnnotator;
 import edu.stanford.nlp.time.GUTimeAnnotator;
 import edu.stanford.nlp.time.HeidelTimeAnnotator;
+import edu.stanford.nlp.time.Temporal;
+import edu.stanford.nlp.time.Time;
 import edu.stanford.nlp.time.TimeAnnotations;
 import edu.stanford.nlp.time.TimeAnnotator;
 import edu.stanford.nlp.time.Timex;
@@ -43,7 +45,7 @@ public class DistributedMain {
         AnnotationPipeline pipeline;
         pipeline = getPipeline();
 
-        String in = "Summer '12 "
+        String in = "Summer 2012 "
                 + "\n\n Summer"
                 + "\n\n Winter"
                 + "\n\n Easter"
@@ -60,7 +62,8 @@ public class DistributedMain {
                 + "\n\n Sun 21st April"
                 + "\n\n Thursday 14th March 2013"
                 + "\n\n foo '12"
-                + "\n\n fffSummer '11.";
+                + "\n\n fff Summer '11."
+                ;
 
         processText(pipeline, in, date);
     }
@@ -234,17 +237,35 @@ public class DistributedMain {
             newText.append(text.substring(characterOffsetStart, characterOffsetEnd));
             System.out.println(text.substring(characterOffsetStart, characterOffsetEnd));
             
-            Timex get = vi.getValue().get(edu.stanford.nlp.time.TimeAnnotations.TimexAnnotation.class);
-            System.out.println(get.toString());
+            Timex timex = vi.getValue().get(edu.stanford.nlp.time.TimeAnnotations.TimexAnnotation.class);
+            System.out.println(timex.toString());
+            
             TimeDensityFunction get1 = vi.getValue().get(edu.stanford.nlp.time.distributed.TimePDF.TimePDFAnnotation.class);
             System.out.print("\tDensity:");
             if (get1 == null) {
                 System.out.println("null");
             } else {
-                System.out.println(get1.toString());
+                System.out.println(
+                        get1.toString()
+                );
             }
+            
+            if (false) {
+                Temporal temporal = vi.getValue().get(edu.stanford.nlp.time.distributed.TimePDF.TemporalAnnotation.class);
+                if (temporal == null) {
+                    System.out.println("null");
+                } else {
+                    TimeDensityFunction timeExpression = null;
+                    if (temporal instanceof Time) {
+                        timeExpression = ((Time)temporal).getTimeExpression();
+                    }
 
-            String gnuPlot = get.getGNUPlot();
+                    System.out.println(timeExpression != null ? timeExpression.getGNUPlot("x") : "null");    
+                }
+            }
+            
+
+            String gnuPlot = timex.getGNUPlot();
 
             System.out.println("\tplot: " + gnuPlot);
             "".toString();

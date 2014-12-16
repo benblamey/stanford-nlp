@@ -733,6 +733,11 @@ public class SUTime {
                 
                 TimeDensityFunction timeFunction = null;
                 if ((arg1 instanceof Time) && (arg2 instanceof Time)) {
+
+                    System.out.println("INTERSECTING - hash: " 
+                            + arg1.hashCode() + " and " 
+                            + arg2.hashCode());
+                    
                     TimeDensityFunction te1 = ((Time)arg1).getTimeExpression();
                     TimeDensityFunction te2 = ((Time)arg2).getTimeExpression();
                     
@@ -757,6 +762,8 @@ public class SUTime {
                         }
                         tTime.setTimeExpression(new IntersectTimeExpression(te1, te2));
                     }
+                    
+                    System.out.println("RETURNING - hash: " + t.hashCode());
                 }
             
                

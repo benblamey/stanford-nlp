@@ -5,6 +5,7 @@ import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.tokensregex.*;
 import edu.stanford.nlp.pipeline.ChunkAnnotationUtils;
 import edu.stanford.nlp.time.TimeAnnotations;
+import edu.stanford.nlp.time.distributed.TimePDF;
 import edu.stanford.nlp.util.*;
 
 import java.util.*;
@@ -113,27 +114,20 @@ public class TimeExpressionExtractorImpl implements TimeExpressionExtractor {
           logger.log(Level.WARNING, "Failed to process " + text + " with attributes " + timexAttributes, e);
           continue;
         }
-        
         cm.set(TimeAnnotations.TimexAnnotation.class, timex);
-        
-        ARG -- is the time pdf being added -- where is the other code for this??
-        
-        //if (timex != null) {
-          coreMaps.add(cm);
-        } else {
+        if (timex != null) {
           logger.warning("No timex expression for: " + text);
         }
         
         if (temporal instanceof Time) {
-            Time foo = (Time)temporal;
-            coreMaps.a
-            foo.getTimeExpression()
+            Time temporalTime = (Time)temporal;
+            cm.set(TimePDF.TimePDFAnnotation.class, temporalTime.getTimeExpression());
         }
         
-        
+        // for debugging purposes, include the temporal itself.
+        cm.set(TimePDF.TemporalAnnotation.class, temporal);
+        coreMaps.add(cm);
       }
-      
-      
     }
     return coreMaps;
   }
