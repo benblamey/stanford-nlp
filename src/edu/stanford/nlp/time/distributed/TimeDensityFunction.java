@@ -70,5 +70,12 @@ public abstract class TimeDensityFunction {
         
         return similarity;
     }
+
+    @Override
+    public String toString() {
+        return this.getGNUPlot("x");
+    }
+    
+    
     
 }

@@ -82,6 +82,7 @@ public class TimeExpressionExtractorImpl implements TimeExpressionExtractor {
     if (timeExpressions == null) return null;
     List<CoreMap> coreMaps = new ArrayList<CoreMap>(timeExpressions.size());
     for (TimeExpression te:timeExpressions) {
+        
       CoreMap cm = te.getAnnotation();
         Temporal temporal = te.getTemporal();
       if (temporal != null) {
@@ -112,13 +113,27 @@ public class TimeExpressionExtractorImpl implements TimeExpressionExtractor {
           logger.log(Level.WARNING, "Failed to process " + text + " with attributes " + timexAttributes, e);
           continue;
         }
+        
         cm.set(TimeAnnotations.TimexAnnotation.class, timex);
-        if (timex != null) {
+        
+        ARG -- is the time pdf being added -- where is the other code for this??
+        
+        //if (timex != null) {
           coreMaps.add(cm);
         } else {
           logger.warning("No timex expression for: " + text);
         }
+        
+        if (temporal instanceof Time) {
+            Time foo = (Time)temporal;
+            coreMaps.a
+            foo.getTimeExpression()
+        }
+        
+        
       }
+      
+      
     }
     return coreMaps;
   }

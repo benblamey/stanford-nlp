@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package test.java.edu.stanford.nlp.time.distributed;
 
 import edu.stanford.nlp.pipeline.Annotation;
@@ -28,6 +25,7 @@ public class DistributedSUTimeTest {
     public DistributedSUTimeTest() {
     }
 
+    
 
     @Before
     public void setUp() throws Exception {
