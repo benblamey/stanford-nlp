@@ -80,6 +80,7 @@ public class IsoTime extends PartialTime {
 
             @Override
             public String getGNUPlot(String millTimeSecondsExpr) {
+                // Too small an interval -- just return all time.
                 return "1";
             }
         };

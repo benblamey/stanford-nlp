@@ -610,34 +610,8 @@ public class PartialTime extends Time {
 
             @Override
             public String getGNUPlot(String millTimeSecondsExpr) {
-
-                String func = "1";
-
-                for (DateTimeField f : base.getFields()) {
-                    int get = base.get(f.getType());
-                    DateTimeFieldType type = f.getType();
-
-                    if (type == DateTimeFieldType.year()) {
-                        func += "*(tm_year(" + millTimeSecondsExpr + ")==" + get + ")";
-                    } else if (type == DateTimeFieldType.yearOfCentury()) {
-                        // problems using gnuplot mod for tm_year(..).
-                        // Assume >2000 instead.
-                        get = get + 2000;
-                        func += "*(tm_year(" + millTimeSecondsExpr + ")==" + get + ")";
-                    } else if (type == DateTimeFieldType.monthOfYear()) {
-                        func += "*(tm_mon(" + millTimeSecondsExpr + ")==" + get + ")";
-                    } else if (type == DateTimeFieldType.dayOfMonth()) {
-                        func += "*(tm_mday(" + millTimeSecondsExpr + ")==" + get + ")";
-                    } else if (type == DateTimeFieldType.hourOfDay()) {
-                        // ignore.
-                    } else if (type == DateTimeFieldType.minuteOfHour()) {
-                        // ignore.
-                    } else {
-                        throw new UnsupportedOperationException("field type not supported.");
-                    }
-                }
-
-                return func;
+                // Use the field values in the underlying 'Partial'.
+                return TimeDensityImpl.PartialToTimeExpression(base, millTimeSecondsExpr);
             }
         };
         
