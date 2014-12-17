@@ -113,7 +113,7 @@ public class TimeExpressionExtractorImpl implements TimeExpressionExtractor {
         } catch (Exception e) {
           logger.log(Level.WARNING, "Failed to process " + text + " with attributes " + timexAttributes, e);
           continue;
-        }        
+        }
         cm.set(TimeAnnotations.TimexAnnotation.class, timex);
         if (timex != null) {
           logger.warning("No timex expression for: " + text);
@@ -126,7 +126,6 @@ public class TimeExpressionExtractorImpl implements TimeExpressionExtractor {
         
         // for debugging purposes, include the temporal itself.
         cm.set(TimePDF.TemporalAnnotation.class, temporal);
-        
         coreMaps.add(cm);
       }
     }
