@@ -3,7 +3,6 @@ package edu.stanford.nlp.time.distributed;
 import benblamey.gnuplot.GnuPlot;
 import edu.stanford.nlp.time.Range;
 import edu.stanford.nlp.time.Time;
-import edu.stanford.nlp.time.distributed.TimeDensityFunction;
 import org.joda.time.DateTime;
 
 public class TimeRangeDensity extends TimeDensityFunction {
@@ -31,11 +30,15 @@ public class TimeRangeDensity extends TimeDensityFunction {
     @Override
     public String getGNUPlot(String millTimeSecondsExpr) {
         
+<<<<<<< HEAD
+        
+=======
         if (_range.begin.getJodaTimeInstant() == null || _range.end.getJodaTimeInstant() == null)
         {
             // Unkonwn -- return all the times.
             return "1";
         }
+>>>>>>> cd239d83353992a06a02226dd2dee5dc8bb967bb
         
         return "(" 
                 + "(" + millTimeSecondsExpr + " > " + GnuPlot.toMillTime(_range.begin.getJodaTimeInstant())  + ")"

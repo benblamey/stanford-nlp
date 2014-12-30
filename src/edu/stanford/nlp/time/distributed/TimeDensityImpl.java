@@ -1,11 +1,8 @@
 package edu.stanford.nlp.time.distributed;
 
-import edu.stanford.nlp.time.distributed.TimeDensityFunction;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeField;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.Partial;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class TimeDensityImpl extends TimeDensityFunction {
     private final Partial _base;
@@ -44,25 +41,38 @@ public class TimeDensityImpl extends TimeDensityFunction {
         return expression;
     }
 
-    public static String PartialToTimeExpression(final Partial partial, String millTimeSecondsExpr) throws NotImplementedException {
+    public static String PartialToTimeExpression(final Partial partial, String millTimeSecondsExpr) {
         
         String expression = "1";
         int[] values = partial.getValues();
         for (DateTimeFieldType fieldType : partial.getFieldTypes()) {
             int tempexFieldValue = partial.get(fieldType);
             
+            // For conversion see:
+            // http://joda-time.sourceforge.net/key_instant.html
+            // http://www.cplusplus.com/reference/ctime/tm/
+            
             if (fieldType == DateTimeFieldType.yearOfCentury()) {
                 expression += "*(tm_year("+millTimeSecondsExpr+") % 1000 == " + tempexFieldValue+ ")";
+                
             } else if (fieldType == DateTimeFieldType.year()) {
                 expression += "*(tm_year("+millTimeSecondsExpr+") == " + tempexFieldValue+ ")";
+                
             } else if (fieldType == DateTimeFieldType.dayOfMonth()) {   
-                expression += "*(tm_mday("+millTimeSecondsExpr+") == " + tempexFieldValue+ ")";
+                expression += "*(tm_mday("+millTimeSecondsExpr+") == " + (tempexFieldValue)+ ")";
+                
             } else if (fieldType == DateTimeFieldType.dayOfWeek()) {
-                expression += "*(tm_wday("+millTimeSecondsExpr+") == " + tempexFieldValue+ ")";
+                expression += "*(tm_wday("+millTimeSecondsExpr+") == " + (tempexFieldValue%7)+ ")";
+                
             } else if (fieldType == DateTimeFieldType.monthOfYear()) {
-                expression += "*(tm_mon("+millTimeSecondsExpr+") == " + tempexFieldValue+ ")";
+                expression += "*(tm_mon("+millTimeSecondsExpr+") == " + (tempexFieldValue-1)+ ")"; // Jan is month 0 in gnuplot.
+                
+            } else if (fieldType == DateTimeFieldType.hourOfDay()) {
+            } else if (fieldType == DateTimeFieldType.clockhourOfDay()) {
+            } else if (fieldType == DateTimeFieldType.minuteOfHour()) {
+            } else if (fieldType == DateTimeFieldType.secondOfMinute()) {
             } else {
-                throw new NotImplementedException();
+                throw new UnsupportedOperationException();
             }
         }
         
