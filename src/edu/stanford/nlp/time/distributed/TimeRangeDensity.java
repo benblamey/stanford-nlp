@@ -1,6 +1,6 @@
 package edu.stanford.nlp.time.distributed;
 
-import benblamey.gnuplot.Gnuplot;
+import benblamey.gnuplot.GnuPlot;
 import edu.stanford.nlp.time.Range;
 import edu.stanford.nlp.time.Time;
 import edu.stanford.nlp.time.distributed.TimeDensityFunction;
@@ -30,10 +30,13 @@ public class TimeRangeDensity extends TimeDensityFunction {
 
     @Override
     public String getGNUPlot(String millTimeSecondsExpr) {
+        
+        
+        
         return "(" 
-                + "(" + millTimeSecondsExpr + " > " + Gnuplot.toMillTime(_range.begin.getJodaTimeInstant())  + ")"
+                + "(" + millTimeSecondsExpr + " > " + GnuPlot.toMillTime(_range.begin.getJodaTimeInstant())  + ")"
                 + " && " 
-                + "(" + millTimeSecondsExpr + " > " + Gnuplot.toMillTime(_range.end.getJodaTimeInstant()) + ")"
+                + "(" + millTimeSecondsExpr + " > " + GnuPlot.toMillTime(_range.end.getJodaTimeInstant()) + ")"
                 +")";
     }
 

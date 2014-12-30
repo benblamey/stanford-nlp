@@ -65,6 +65,8 @@ public class TimeDensityImpl extends TimeDensityFunction {
                 throw new NotImplementedException();
             }
         }
+        
+        
         return expression;
     }
 
