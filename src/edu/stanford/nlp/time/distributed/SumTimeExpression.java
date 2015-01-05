@@ -25,9 +25,9 @@ public class SumTimeExpression extends TimeDensityFunction {
     }
 
     public double getDensity(DateTime time) {
-        double density = 1;
+        double density = 0.0;
         for (TimeDensityFunction f : _models) {
-            density += f.getDensity(time);
+            density += f.getDensity(time) / f.getTotalMass();
         }
         return density;
     }

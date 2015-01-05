@@ -11,10 +11,16 @@ public abstract class TimeDensityFunction {
     private static final DateTime s_startDay = new DateTime(2005,1,1,0,0);
     private static final DateTime s_endDay = new DateTime(2014,12,31,0,0);
     private static final int s_numberOfDays = Days.daysBetween(s_startDay, s_endDay).getDays() + 1;
+    private double _originalTotalMass;
     
     public abstract double getDensity(DateTime time);
     
     public abstract String getGNUPlot(String millTimeSecondsExpr);
+    
+    public double getTotalMass() {
+        getDensities();
+        return _originalTotalMass;
+    }
     
     private double[] _densities = null;
     
@@ -42,6 +48,7 @@ public abstract class TimeDensityFunction {
             for (int i = 0; i < s_numberOfDays; i++) {
                 _densities[i] = _densities[i]/totalDensity;
             }
+            _originalTotalMass = totalDensity;
         }
         
         return _densities;

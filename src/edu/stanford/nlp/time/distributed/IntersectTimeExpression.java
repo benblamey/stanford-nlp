@@ -10,6 +10,9 @@ public class IntersectTimeExpression extends TimeDensityFunction {
     ArrayList<TimeDensityFunction> _models = new ArrayList<TimeDensityFunction>();
     ArrayList<Time> _debuggingModels = new ArrayList<Time>();
     
+    public IntersectTimeExpression() {
+    }
+    
     public IntersectTimeExpression(Time left, Time right) {
         _debuggingModels.add(left);
         _models.add(left.getTimeExpression());
