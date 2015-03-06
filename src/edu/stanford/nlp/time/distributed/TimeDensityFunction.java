@@ -66,7 +66,11 @@ public abstract class TimeDensityFunction {
         // Getting the densities performs normalization if it has not already been done so.
         double[] densitiesX = x.getDensities();
         double[] densitiesY = y.getDensities();
-       
+        
+        if (densitiesX.length != densitiesY.length) {
+                throw new RuntimeException("densities are not the same length.");
+        }
+        
         double similarity = 0;
         for (int i = 0; i < s_numberOfDays; i++) {
             if (densitiesX[i] < 0 || densitiesY[i] < 0) {
