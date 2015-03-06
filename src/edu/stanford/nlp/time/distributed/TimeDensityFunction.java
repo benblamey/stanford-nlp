@@ -32,9 +32,9 @@ public abstract class TimeDensityFunction {
         return _densities != null;
     }
     
-    private double[] getDensities() {
+    private synchronized double[] getDensities() {
         
-        if (_densities != null) {
+        if (_densities == null) {
             _densities = new double[s_numberOfDays];
             
             double totalDensity = 0;
