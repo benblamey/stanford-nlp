@@ -7,11 +7,20 @@ import org.joda.time.DateTime;
 public class SumTimeExpression extends TimeDensityFunction {
 
     public SumTimeExpression(TimeDensityFunction left, TimeDensityFunction right) {
+        if (left == null) {
+                throw new RuntimeException("left cannot be null");
+        }
+        if (right == null) {
+                throw new RuntimeException("right cannot be null");
+        }
         _models.add(left);
         _models.add(right);
     }
     
     public SumTimeExpression(Collection<TimeDensityFunction> densities) {
+        if (densities.contains(null)) {
+                throw new RuntimeException("density cannot be null");
+        }
         _models.addAll(densities);
     }
     
@@ -19,6 +28,9 @@ public class SumTimeExpression extends TimeDensityFunction {
 
     public SumTimeExpression(Object... models) {
         for (Object obj : models) {
+            if (obj == null) {
+                throw new RuntimeException("obj cannot be null");
+            }
             TimeDensityFunction obj2 = (TimeDensityFunction) obj;
             _models.add(obj2);
         }
