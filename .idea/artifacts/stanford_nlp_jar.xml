@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact name="stanford-nlp:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/stanford_nlp_jar</output-path>
+    <root id="root">
+      <element id="archive" name="stanford-nlp.jar">
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
